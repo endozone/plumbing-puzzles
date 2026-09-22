@@ -6,10 +6,10 @@
 <title>Rates Plumbing Puzzles</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Give+You+Glory&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Beth+Ellen&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #faf8f3;
+  --bg: #f8faf3;
   --dot: #ddd8ce;
   --ink: #2d2d2d;
   --muted: #8a857a;
@@ -47,6 +47,15 @@ body {
   padding: 20px 16px 40px;
 }
 
+@media (min-width: 700px) {
+  .app {
+    max-width: 760px;
+    padding: 40px 32px 56px;
+  }
+  .puzzle-title { font-size: 2.6rem; }
+  .landing-title { font-size: 3.4rem; }
+}
+
 /* ---- HEADER ---- */
 .puzzle-header { margin-bottom: 24px; }
 
@@ -57,21 +66,23 @@ body {
   margin-bottom: 16px;
 }
 
-.dots {
+.back-btn {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
 }
 
-.dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  border: 2px solid var(--muted);
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s;
+.back-btn svg {
+  width: 16px;
+  height: 16px;
 }
-.dot.active { background: var(--ink); border-color: var(--ink); }
-.dot.done { background: var(--correct); border-color: var(--correct); }
 
 .reset-btn {
   font-family: 'Patrick Hand', cursive;
@@ -84,11 +95,11 @@ body {
 }
 
 .puzzle-title {
-  font-family: 'Caveat', cursive;
-  font-size: 1.8rem;
-  font-weight: 700;
-  line-height: 1.15;
-  margin-bottom: 4px;
+  font-family: 'Beth Ellen', cursive;
+  font-size: 2.1rem;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-bottom: 10px;
 }
 
 .puzzle-sub {
@@ -341,11 +352,11 @@ body {
 .landing { padding-top: 20px; }
 
 .landing-title {
-  font-family: 'Caveat', cursive;
-  font-size: 2.4rem;
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 6px;
+  font-family: 'Beth Ellen', cursive;
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-bottom: 28px;
 }
 
 .landing-sub {
@@ -379,10 +390,11 @@ body {
 }
 
 .puzzle-card .card-info h3 {
-  font-family: 'Caveat', cursive;
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 2px;
+  font-family: 'Beth Ellen', cursive;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-bottom: 4px;
 }
 
 .puzzle-card .card-info p {
@@ -439,56 +451,56 @@ const HD = ['hd-1','hd-2','hd-3','hd-4','hd-5'];
 
 const puzzles = [
   {
-    title: 'How a dollar moves through the system',
-    sub: 'The IORB arbitrage',
+    title: 'The fed funds funding circuit',
+    sub: 'What actually drives the overnight lending market',
     type: 'flow',
     steps: [
-      { id:'a', text:'FHLB issues overnight discount notes', color: 0,
-        explain:'FHLBs raise short-term funding by issuing overnight discount notes to money market funds. The DN rate is typically below EFFR.' },
+      { id:'a', text:'Federal Home Loan Banks (FHLBs) issue overnight discount notes', color: 0,
+        explain:'FHLBs are a system of 11 government-sponsored cooperative banks that exist to support mortgage lending across the U.S. To fund their daily operations, they issue overnight discount notes - essentially short-term IOUs - sold mainly to money market funds. The interest rate they pay on these notes is typically below the Federal Funds Rate.' },
       { id:'b', text:'Uses excess cash to lend in Fed Funds', color: 1,
-        explain:'When daily cash exceeds liquidity needs, FHLBs lend in the FF market. They prefer FF over repo because cash returns earlier the next day (~same day vs ~3pm T+1 for repo).' },
-      { id:'c', text:'Foreign bank borrows in FF below IORB', color: 2,
-        explain:'Foreign bank branches in the US borrow these funds. They dominate FF borrowing (~93%) because they face lighter regulation than domestic banks — no FDIC fees, softer leverage ratios.' },
+        explain:'The Fed Funds market is where financial institutions lend cash to each other overnight, without requiring collateral. When an FHLB has more cash on hand than it needs for the day, it lends the surplus here. They can’t leave cash at the Fed because they aren’t banks. They’re "government-sponsored enterprises", and the Fed only pays interest on reserves to depository institutions. So any positive return the FHLB can earn in the Fed Funds market beats the alternative (zero). FHLBs make up roughly 95% of all lending in this market.' },
+      { id:'c', text:'Foreign bank borrows in FF below interest on reserve balances (IORB)', color: 2,
+        explain:'Branches of large international banks operating in the U.S. (Barclays, Deutsche Bank, etc.) are the dominant borrowers in this market, making up roughly 93% of volume. They borrow at the Fed Funds Rate, which is lower than the interest rate the Fed pays on reserves (called IORB [Interest on Reserve Balances]). Foreign banks are more profitable at this than US domestic banks for two reasons: they don’t pay FDIC deposit insurance fees (their U.S. deposits aren’t covered by FDIC insurance), and their home-country regulators impose lighter leverage requirements than U.S. regulators do.' },
       { id:'d', text:'Parks the cash at the Fed as reserves', color: 3,
-        explain:'The foreign bank deposits the borrowed cash at the Fed, where it sits as reserve balances.' },
-      { id:'e', text:'Earns IORB — the spread is profit', color: 4,
-        explain:'The Fed pays IORB on those reserves. The spread between IORB and the FF borrowing rate is the arbitrage profit. Foreign banks keep more of it because they avoid FDIC insurance and face softer leverage requirements.' }
+        explain:'Reserves are cash balances that banks hold at the Federal Reserve. The foreign bank takes the cash it just borrowed in the Fed Funds market and deposits it at the Fed, where it sits overnight.' },
+      { id:'e', text:'Earns IORB', color: 4,
+        explain:'The foreign bank then earns IORB on its reserves but only pays the lower Fed Funds Rate to borrow. The difference is essentially risk-free profit. This arbitrage is what keeps the Fed Funds Rate anchored close to (but slightly below) IORB, which is how the Fed maintains control over short-term interest rates.' }
     ]
   },
   {
     title: 'Stack the rates: ceiling to floor',
-    sub: 'How the Fed controls the target range',
+    sub: 'How the Fed keeps short-term rates in the target range',
     type: 'stack',
-    topLabel: '← ceiling',
-    bottomLabel: '← floor',
+    topLabel: 'ceiling',
+    bottomLabel: 'floor',
     steps: [
-      { id:'a', text:'SRF / Discount Window — 4.50%', color: 2,
-        explain:'The Standing Repo Facility lets dealers and banks borrow cash from the Fed against collateral. Set at the top of the range as a ceiling on repo rates. Stigma and balance sheet costs mean it\'s not a perfectly firm ceiling.' },
-      { id:'b', text:'SOFR — 4.44%', color: 1,
-        explain:'Secured Overnight Financing Rate — the broadest measure of Treasury collateralized repo. Not the Fed\'s target, but increasingly important since LIBOR transition. Would be the logical replacement if the Fed ever moved its target.' },
-      { id:'c', text:'IORB — 4.40% (the magnet)', color: 3,
-        explain:'Interest on Reserve Balances — the rate banks earn on reserves at the Fed. Called the "magnet" because banks won\'t lend below it, so it pulls other money market rates toward it. Set by the Board of Governors.' },
-      { id:'d', text:'EFFR — 4.33% (policy target)', color: 0,
-        explain:'Effective Federal Funds Rate — the Fed\'s primary policy target. Trades below IORB because FHLBs (the main FF lenders) can\'t earn IORB, so banks can borrow from them at a discount and pocket the spread.' },
-      { id:'e', text:'ON RRP — 4.25%', color: 4,
-        explain:'Overnight Reverse Repo — where MMFs and GSEs park excess cash with the Fed. Set at the bottom of the range as a floor. Not a perfect floor: some investors accept rates slightly below to maintain dealer relationships.' }
+      { id:'a', text:'Standing Repo Facility (SRF)', color: 2,
+        explain:'The SFR is where banks and primary dealers (large financial firms that trade directly with the Fed) can borrow cash overnight from the Fed by pledging Treasury bonds as collateral. If short-term market rates spike above this level, banks can just borrow from the Fed instead, which puts a cap on how high rates can go. In practice, it’s not a perfectly firm ceiling: banks are reluctant to use it because there’s a stigma attached to borrowing from the central bank (i.e. it signals you couldn’t get funding in the open market).' },
+      { id:'b', text:'Secured Overnight Financing Rate (SOFR)', color: 1,
+        explain:'SOFR measures the average cost of borrowing cash overnight using Treasury bonds as collateral. “Secured” means the borrower posts collateral, unlike fed funds lending which is unsecured. You may have heard of London Interbank Offered Rate (LIBOR), the old benchmark rate that was phrased out in 2021 after a manipulation scandal. SOFR is essentially its replacement. Most new loans, mortgages, derivatives, and financial contracts now reference SOFR. It’s not the Fed’s official policy target, but it’s become one of the most important interest rates in the financial system.' },
+      { id:'c', text:'Interest on Reserve Balances (IORB)', color: 3,
+        explain:'This is arguably the Fed’s most important policy tool. IORB is the interest rate the Fed pays banks for holding cash at the Federal Reserve. It acts like a magnet for all other short-term rates. Since banks can always earn IORB risk-free by parking cash at the Fed, they won’t lend money to anyone else for less than that. This pulls every other overnight rate in the market toward IORB. It’s only available to depository institutions (i.e. banks), not to money market funds, FHLBs, or other financial entities.' },
+      { id:'d', text:'Effective Federal Funds Rate (EFFR)', color: 0,
+        explain:'This is what is referred to when the Fed "raises/lowers rates". The EFFR is calculated daily as the median rate on overnight unsecured lending between financial institutions. It’s the Fed’s official policy target. It typically prints a few basis points below IORB because the main lenders in this market - FHLBs - can’t earn IORB themselves. So borrowing banks can get funds from them at a slight discount and still profit by depositing the cash at the Fed to earn IORB.' },
+      { id:'e', text:'Overnight Reverse Repo (ON RRP)', color: 4,
+        explain:'The ON RRP is a facility where money market funds and other eligible entities can lend cash to the Fed overnight, receiving Treasury bonds as collateral in return. It acts as a floor on short-term rates. If rates in the open market drop too low, these entities can always park their cash with the Fed at the ON RRP rate instead. Since December 2024, the Fed has deliberately set this rate at the very bottom of the range to discourage overuse, since the Fed prefers cash flowing through private markets rather than sitting at the central bank.' }
     ]
   },
   {
-    title: 'What happens as QT continues',
-    sub: 'From buffer to stress',
+    title: 'What happens under quantitative tightening',
+    sub: 'Policy changes that shrink the Fed’s balance sheet',
     type: 'flow',
     steps: [
-      { id:'a', text:'Fed lets maturing securities roll off (up to the cap)', color: 0,
-        explain:'The Fed allows up to $5bn UST and $35bn MBS to mature without reinvestment each month. MBS redemptions rarely hit the cap due to slow prepayments at high mortgage rates.' },
+      { id:'a', text:'Fed lets maturing securities roll off', color: 0,
+        explain:'After the pandemic, the Fed bought trillions of dollars in Treasury bonds and mortgage-backed securities (MBS) to pump cash into the economy. This is called quantitative easing, or QE. Under QE, the Fed creates new money and uses it to buy bonds, pushing cash into the financial system and lowering long-term interest rates. Quantitative tightening (QT) is the opposite: as those bonds mature, the Fed just lets them expire. The Fed controls the pace with monthly caps.' },
       { id:'b', text:'Balance sheet assets shrink', color: 1,
-        explain:'As SOMA holdings decline, total Fed assets fall. The Fed has shrunk from ~$9tn peak to ~$6.7tn as of mid-2025.' },
+        explain:'As bonds mature and aren’t replaced, the Fed’s total assets decline. The balance sheet peaked at about $9 trillion and has come down to roughly $6.7 trillion by mid-2025. The assets are mostly the Treasury bonds and mortgage-backed securities the Fed bought during QE, held in a portfolio called the SOMA (System Open Market Account).' },
       { id:'c', text:'Some liability must shrink by the same amount', color: 2,
-        explain:'Assets = Liabilities. So for every dollar of securities that rolls off, some liability must also fall. The question is: which one?' },
-      { id:'d', text:'ON RRP drains first — it\'s the buffer', color: 3,
-        explain:'ON RRP absorbed most of the drain because banks preferred to hold reserves as precautionary buffers (against deposit flight, unrealized losses, stricter rules). ON RRP went from ~$2.5tn (late 2022) to near zero.' },
-      { id:'e', text:'Buffer gone → reserves drain → funding stress risk', color: 4,
-        explain:'With no more ON RRP cushion, every further dollar of QT hits bank reserves directly. That\'s when you risk repo rate spikes and funding market stress — similar to September 2019. BofA expects QT to stop by end of 2025.' }
+        explain:'A balance sheet is balanced, with assets equalling liabilities. So when assets shrink by a dollar, some liability must also shrink by a dollar. The Fed’s main liabilities are: bank reserves (cash that banks hold at the Fed), currency in circulation (physical dollar bills), the Treasury General Account or TGA (essentially the US government’s checking account at the Fed), and the ON RRP facility. The critical question for markets is: which of these absorbs the drain?' },
+      { id:'d', text:'ON RRP drains first', color: 3,
+        explain:'In practice, almost all of the shrinkage came from the ON RRP facility, not from bank reserves. ON RRP balances dropped from about $2.5 trillion in late 2022 to near zero. Why did reserves stay stable? Banks chose to hold onto their cash as precautionary cushions — partly because of the 2023 regional bank failures (SVB, Signature Bank), unrealized losses on their bond portfolios from the rate hiking cycle, and stricter liquidity requirements from regulators. Because the drain came from ON RRP rather than reserves, the banking system stayed comfortable even as the Fed’s balance sheet shrank significantly.' },
+      { id:'e', text:'Funding stress risk occurs', color: 4,
+        explain:'Once the ON RRP buffer is fully depleted, every additional dollar of QT comes directly out of bank reserves. Reserves are what banks use for daily payments and to meet regulatory liquidity requirements, so draining them gets uncomfortable quickly. The cautionary precedent is September 2019, when the Fed drained too many reserves and overnight lending rates spiked unexpectedly, forcing the Fed to restart emergency lending operations. BofA’s rates team estimates QT will need to stop by the end of 2025 to avoid a similar episode of funding market stress.' }
     ]
   },
   {
@@ -497,15 +509,15 @@ const puzzles = [
     type: 'flow',
     steps: [
       { id:'a', text:'Asset manager wants Treasury index exposure', color: 0,
-        explain:'Large asset managers need to replicate Treasury index returns in their portfolios. They could buy cash bonds outright, but there\'s a more capital-efficient way.' },
-      { id:'b', text:'Buys futures instead of cash bonds (cheaper leverage)', color: 1,
-        explain:'Futures provide leverage without repo, which has unfavorable accounting treatment. This frees up cash for money markets or credit, generating extra yield — especially attractive when the curve is inverted.' },
+        explain:'Large investment managers (pension funds, mutual funds, index funds) need to hold Treasury bonds in their portfolios to match bond market benchmarks. The straightforward approach would be to simply buy the bonds. But there’s a more capital-efficient option: futures contracts (standardized agreements to buy or sell a Treasury bond at a set price on a future date).' },
+      { id:'b', text:'Buys futures instead of cash bonds', color: 1,
+        explain:'Treasury futures let you get the same market exposure as holding the actual bonds, but without paying the full price upfront. You only need to post a small margin deposit (a fraction of the bond’s face value) at the exchange. This frees up cash that can be invested elsewhere for extra return, which is particularly attractive when short-term interest rates are high. It also avoids the accounting and operational complexity of financing actual bond positions. The trade-off: by holding futures instead of the actual bonds in the index, the asset manager takes on what’s called “basis risk” (the possibility that futures and cash bond prices don’t move in perfect lockstep).' },
       { id:'c', text:'But someone must hold the actual cash bonds', color: 2,
-        explain:'Futures are derivatives — they track bond prices but someone must own the underlying securities. The futures market can\'t exist without the cash market beneath it.' },
+        explain:'Futures are derivatives - they derive their value from underlying Treasury bonds, but they aren’t the bonds themselves. Every futures contract has a buyer and a seller, and at the end of its life, actual bonds need to change hands. So somewhere in the chain, someone has to own and finance the real Treasury securities. This creates an opening for an investor who is willing to hold the actual bonds and take the other side of the trade.' },
       { id:'d', text:'Hedge fund buys cash bonds, shorts futures (long basis)', color: 3,
-        explain:'Leveraged funds step in: they buy the cash bond and sell futures against it. This is "going long the basis" — essentially buying the embedded delivery options. They profit if the options pay off or if they can carry to delivery.' },
+        explain:'Hedge funds step in as the natural counterparty. They buy the actual Treasury bonds and simultaneously sell futures contracts against them. This paired position is called “going long the basis”, with the “basis” being the price gap between the cash bond and the futures contract. The hedge fund is betting it can earn a small but highly leveraged return by carrying this position to the futures delivery date. They’re roughly equal in size to the asset managers on the other side.' },
       { id:'e', text:'Finances the cash bond purchase via repo', color: 4,
-        explain:'The hedge fund funds its cash bond position in the repo market. This creates a funding dependency — and a constraint on how large these positions can grow. The official sector has flagged this leverage as a financial stability concern.' }
+        explain:'The hedge fund funds its cash bond position in the repo (repurchase) market. It pledges the bonds it just bought as collateral and receives a short-term cash loan in return, typically rolled overnight. This creates leverage and a funding dependency. If borrowing costs spike or lenders pull back, the hedge fund could be forced to sell quickly. This is why financial regulators, including the Fed, the SEC, and the Treasury Department, have flagged the basis trade as a potential financial stability risk: a large amount of leveraged money depends on short-term funding remaining cheap and available.' }
     ]
   }
 ];
@@ -534,12 +546,18 @@ function arrowSVG() {
   </svg>`;
 }
 
+function backArrowSVG() {
+  return `<svg viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9 1 L1 8 L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M1 8 L19 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </svg>`;
+}
+
 function renderLanding() {
   currentPuzzle = -1;
   let html = `
     <div class="landing">
       <div class="landing-title">Rates Plumbing<br>Puzzles</div>
-      <p class="landing-sub">Drag each step into the right place to complete the flowchart. Based on BofA's 2025 primers.</p>
   `;
   puzzles.forEach((p, i) => {
     const done = completedPuzzles.has(i);
@@ -572,12 +590,14 @@ function renderPuzzle() {
   const isComplete = slotState.every((s, i) => s === p.steps[i].id);
 
   let html = `<div class="puzzle-header">`;
-  html += `<div class="progress-row"><div class="dots">`;
+  html += `<div class="progress-row">`;
+  html += `<button class="back-btn" onclick="renderLanding()">${backArrowSVG()} Back</button>`;
+  html += `<div class="dots">`;
   puzzles.forEach((_, i) => {
     const cls = i === currentPuzzle ? 'active' : completedPuzzles.has(i) ? 'done' : '';
     html += `<div class="dot ${cls}" onclick="navPuzzle(${i})"></div>`;
   });
-  html += `</div><button class="reset-btn" onclick="resetPuzzle()">reset</button></div>`;
+  html += `</div><button class="reset-btn" onclick="resetPuzzle()">Reset</button></div>`;
   html += `<div class="puzzle-title">${p.title}</div>`;
   html += `<div class="puzzle-sub">${p.sub}</div>`;
   html += `</div>`;
@@ -610,7 +630,7 @@ function renderPuzzle() {
   const shuffled = isComplete ? [] : shuffle(available);
 
   if (!isComplete && shuffled.length > 0) {
-    html += `<div class="bank-label">pieces</div>`;
+    html += `<div class="bank-label">Pieces</div>`;
     html += `<div class="bank">`;
     shuffled.forEach((s, i) => {
       const sel = selectedPiece === s.id ? 'selected' : '';
@@ -645,8 +665,6 @@ function renderPuzzle() {
       html += `<button class="nav-btn ${HD[3]}" onclick="renderLanding()">Back to puzzles</button>`;
     }
   }
-
-  html += `<button class="nav-btn ${HD[1]}" onclick="renderLanding()" style="margin-top:8px; font-size:0.95rem; color:var(--muted); border-color:var(--slot-border)">← all puzzles</button>`;
 
   app.innerHTML = html;
 }
