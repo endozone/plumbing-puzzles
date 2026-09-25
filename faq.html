@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About & FAQ · Rates Plumbing Puzzles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Beth+Ellen&family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8faf3;
+  --dot: #d9d6e6;
+  --ink: #2c2f5e;
+  --muted: #7f7c9a;
+  --blue: #bccff0;
+  --peach: #f4c7aa;
+  --rose: #efbccb;
+  --lilac: #d2c9ef;
+  --sage: #c3dfc3;
+  --mustard: #f2d88f;
+  --sage-deep: #6fa37a;
+  --wrong: #c8607a;
+  --paper-edge: #fffdf8;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .17 0 0 0 0 .18 0 0 0 0 .37 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .17 0 0 0 0 .18 0 0 0 0 .37 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-padding-top: env(safe-area-inset-top, 0px); background: var(--bg); }
+
+body {
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive, system-ui;
+  background-color: var(--bg);
+  background-image: var(--grain-soft), radial-gradient(circle, var(--dot) 1.2px, transparent 1.4px);
+  background-size: 160px 160px, 24px 24px;
+  color: var(--ink);
+  min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
+
+@media (min-width: 700px) {
+  .app { max-width: 760px; padding: 40px 32px 56px; }
+  .puzzle-title { font-size: 2.6rem; }
+  .landing-title { font-size: 3.4rem; }
+}
+
+/* ============ PAPER CUTOUT ============ */
+/* Each .paper gets its own torn edge via --tf (front) and --tb (white fibre underlayer). */
+.paper {
+  position: relative;
+  --lift: 0px;
+  transform: translateY(var(--lift)) rotate(var(--rot, 0deg));
+  filter: drop-shadow(1px 2px 0 rgba(44,47,94,.13)) drop-shadow(0 4px 5px rgba(44,47,94,.10));
+  transition: transform .18s ease, filter .18s ease;
+}
+.paper::before,
+.paper::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+.paper::before {
+  inset: -3px;
+  background: var(--grain), var(--paper-edge);
+  clip-path: var(--tb);
+}
+.paper::after {
+  inset: 0;
+  background: var(--grain), var(--c, var(--lilac));
+  clip-path: var(--tf);
+}
+.pc { position: relative; z-index: 1; display: block; }
+
+/* ============ HEADER ============ */
+.puzzle-header { margin-bottom: 26px; }
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.back-btn, .reset-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: inherit;
+  font-size: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+}
+.back-btn { color: var(--ink); }
+.reset-btn { color: var(--muted); }
+.back-btn svg { width: 16px; height: 16px; }
+
+.dots { display: flex; gap: 9px; }
+.dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--muted);
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.dot.active { background: var(--ink); border-color: var(--ink); }
+.dot.done { background: var(--sage-deep); border-color: var(--sage-deep); }
+
+.puzzle-title {
+  font-family: 'Beth Ellen', cursive;
+  font-size: 2.1rem;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.puzzle-sub { font-size: 1.08rem; color: var(--muted); }
+
+/* ============ FLOW / SLOTS ============ */
+.flow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-bottom: 30px;
+}
+
+/* empty slot = a quilt patch with stitching, waiting for its piece */
+.slot {
+  position: relative;
+  min-height: 64px;
+  border-radius: 10px;
+  background: var(--grain), rgba(210,201,239,.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s;
+}
+.slot::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 2px dashed rgba(44,47,94,.28);
+  border-radius: 6px;
+  transition: border-color .2s;
+  pointer-events: none;
+}
+.slot.highlight { background: var(--grain), rgba(210,201,239,.55); }
+.slot.highlight::before { border-color: rgba(44,47,94,.6); }
+
+.slot.filled { background: none; min-height: 0; }
+.slot.filled::before { display: none; }
+
+.slot-num {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--muted);
+  z-index: 1;
+}
+
+.slot .paper { width: 100%; }
+.slot .paper .pc {
+  padding: 14px 40px;
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+.slot .paper .slot-num { opacity: .55; }
+
+.mark {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%) rotate(12deg);
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mark.x {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--wrong);
+}
+
+.star { width: 100%; height: 100%; filter: drop-shadow(0 1px 1px rgba(44,47,94,.25)); }
+
+@keyframes stick {
+  0% { transform: translateY(-50%) rotate(-30deg) scale(0); }
+  70% { transform: translateY(-50%) rotate(18deg) scale(1.15); }
+  100% { transform: translateY(-50%) rotate(12deg) scale(1); }
+}
+.mark.fresh { animation: stick .35s ease-out; }
+
+/* thread arrows between slots */
+.arrow-down {
+  display: flex;
+  justify-content: center;
+  height: 30px;
+  color: var(--muted);
+}
+.arrow-down svg { width: 22px; height: 30px; }
+
+.flow-label {
+  font-family: 'Caveat', cursive;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 6px;
+}
+.flow-label.bottom { margin-top: 6px; margin-bottom: 0; }
+
+/* ============ BANK ============ */
+.bank-label {
+  font-family: 'Caveat', cursive;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 10px;
+  margin-bottom: 26px;
+  min-height: 48px;
+}
+
+.piece { cursor: pointer; user-select: none; -webkit-user-select: none; }
+.piece .pc { padding: 11px 15px; font-size: .98rem; line-height: 1.3; }
+.piece:active { --lift: 1px; }
+.piece.selected {
+  --lift: -5px;
+  filter: drop-shadow(1px 2px 0 rgba(44,47,94,.18)) drop-shadow(0 10px 10px rgba(44,47,94,.18));
+}
+.piece.selected .pc { text-decoration: underline wavy rgba(44,47,94,.35); text-underline-offset: 4px; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.shake { animation: shake .35s ease; }
+
+/* ============ COMPLETION + EXPLAINER ============ */
+.completion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 0 18px;
+}
+.completion .star-wrap { width: 34px; height: 34px; transform: rotate(-10deg); }
+.completion-text {
+  font-family: 'Caveat', cursive;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.explainer-title {
+  font-family: 'Caveat', cursive;
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.explain-item { display: flex; gap: 14px; margin-bottom: 18px; }
+
+.explain-bar {
+  width: 6px;
+  border-radius: 2px 4px 3px 2px;
+  flex-shrink: 0;
+  background: var(--grain), var(--c);
+}
+
+.explain-body { flex: 1; min-width: 0; }
+
+.explain-step {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 3px;
+}
+
+.explain-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a4a6a;
+}
+
+/* ============ BUTTONS ============ */
+.paper-btn {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 1.12rem;
+  color: var(--ink);
+  cursor: pointer;
+}
+.paper-btn .pc { padding: 15px; }
+.paper-btn:active { --lift: 1px; }
+
+/* ============ LANDING ============ */
+.landing { padding-top: 20px; }
+
+.landing-title {
+  font-family: 'Beth Ellen', cursive;
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-bottom: 32px;
+}
+
+.puzzle-card { cursor: pointer; margin-bottom: 16px; }
+.puzzle-card .pc {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+}
+.puzzle-card:active { --lift: 1px; }
+
+.card-num {
+  font-family: 'Caveat', cursive;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--muted);
+  flex-shrink: 0;
+  width: 26px;
+  text-align: center;
+}
+
+.card-info h3 {
+  font-family: 'Beth Ellen', cursive;
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.card-info p { font-size: .92rem; color: #5d5b7c; }
+
+.card-check {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  transform: rotate(14deg);
+  opacity: 0;
+}
+.puzzle-card.completed .card-check { opacity: 1; }
+
+/* ============ SECTIONS / FORK ============ */
+.fork-label {
+  font-family: 'Caveat', cursive;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: center;
+  margin: 2px 0 10px;
+}
+.section-label {
+  font-family: 'Caveat', cursive;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 6px 0 8px 4px;
+}
+.section-gap { height: 18px; }
+
+/* ============ NOTES ============ */
+.note-paper { margin: 4px 0 22px; }
+.note-paper .pc { padding: 14px 18px 16px; font-size: 1rem; line-height: 1.55; color: #3d3f66; }
+.note-head {
+  display: block;
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+/* ============ PART 2: CORRIDOR ============ */
+.part-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 14px;
+  color: var(--muted);
+}
+.part-divider::before, .part-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 2px dashed rgba(44,47,94,.22);
+}
+.part-title {
+  font-family: 'Beth Ellen', cursive;
+  font-size: 1.55rem;
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+.part-intro { font-size: 1.02rem; line-height: 1.55; color: #4a4a6a; margin-bottom: 18px; }
+
+.snap-head { margin-bottom: 10px; }
+.snap-count { font-size: .95rem; color: var(--muted); }
+.snap-title {
+  font-family: 'Caveat', cursive;
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.snap-regime { font-size: 1rem; color: #5d5b7c; }
+
+.corridor { display: flex; flex-direction: column; margin: 12px 0 22px; }
+
+.zone {
+  position: relative;
+  min-height: 70px;
+  padding: 30px 12px 12px;
+  border-radius: 10px;
+  background: var(--grain), rgba(210,201,239,.22);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s;
+}
+.zone::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 2px dashed rgba(44,47,94,.22);
+  border-radius: 6px;
+  pointer-events: none;
+  transition: border-color .2s;
+}
+.zone.highlight { background: var(--grain), rgba(210,201,239,.5); }
+.zone.highlight::before { border-color: rgba(44,47,94,.55); }
+.zone-label {
+  position: absolute;
+  top: 9px;
+  left: 14px;
+  font-size: .9rem;
+  color: var(--muted);
+}
+
+.fence { margin: 5px -6px; z-index: 1; }
+.fence .pc {
+  padding: 7px 14px;
+  font-size: .95rem;
+  text-align: center;
+  line-height: 1.3;
+}
+.fence-role { font-family: 'Caveat', cursive; font-weight: 700; font-size: 1.1rem; margin-right: 6px; }
+
+.tag { cursor: pointer; user-select: none; -webkit-user-select: none; }
+.tag .pc { padding: 7px 14px; font-size: 1rem; white-space: nowrap; }
+.tag.selected {
+  --lift: -5px;
+  filter: drop-shadow(1px 2px 0 rgba(44,47,94,.18)) drop-shadow(0 10px 10px rgba(44,47,94,.18));
+}
+.tag.selected .pc { text-decoration: underline wavy rgba(44,47,94,.35); text-underline-offset: 4px; }
+.tag.placed { cursor: default; }
+.tag-val { font-weight: 400; color: #4a4a6a; margin-left: 4px; }
+
+.explain-sub {
+  font-family: 'Caveat', cursive;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 22px 0 12px;
+}
+
+/* ============ A11Y ============ */
+[role="button"]:focus-visible, button:focus-visible, .dot:focus-visible {
+  outline: 2px dashed var(--ink);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+<style>
+.faq-page .app { padding-bottom: 64px; }
+.page-title {
+  font-family: 'Beth Ellen', cursive;
+  font-size: 2.3rem;
+  line-height: 1.4;
+  margin: 6px 0 8px;
+}
+.page-sub { font-size: 1.05rem; color: var(--muted); margin-bottom: 22px; line-height: 1.5; }
+
+.jump { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 34px; }
+.jump a { text-decoration: none; color: var(--ink); }
+.jump .pc { padding: 7px 14px; font-size: 1rem; }
+
+.sec-title {
+  font-family: 'Beth Ellen', cursive;
+  font-size: 1.75rem;
+  line-height: 1.45;
+  margin: 40px 0 6px;
+  scroll-margin-top: 16px;
+}
+.sec-intro { font-size: 1rem; color: #4a4a6a; line-height: 1.55; margin-bottom: 18px; }
+
+a.inline, .pc a { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(44,47,94,.4); text-underline-offset: 3px; }
+.pc a:hover { text-decoration-color: var(--ink); }
+
+/* FAQ */
+.faq-item { margin-bottom: 14px; }
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.25;
+  padding: 14px 18px;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary .plus {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  color: var(--muted);
+  transition: transform .2s;
+}
+.faq-item details[open] .plus { transform: rotate(45deg); }
+.faq-body { padding: 0 18px 16px; font-size: 1rem; line-height: 1.6; color: #3d3f66; }
+.faq-body p + p { margin-top: 8px; }
+
+/* Glossary */
+.gloss-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 700px) { .gloss-grid { grid-template-columns: 1fr 1fr; gap: 14px 16px; } }
+.gloss .pc { padding: 12px 16px 14px; }
+.gloss-term {
+  display: block;
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.28rem;
+  line-height: 1.2;
+  margin-bottom: 3px;
+}
+.gloss-def { font-size: .97rem; line-height: 1.5; color: #3d3f66; }
+
+/* Sources + reading */
+.src-card { margin-bottom: 16px; }
+.src-card .pc { padding: 14px 18px 16px; }
+.src-head {
+  display: block;
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+.src-list { list-style: none; }
+.src-list li { font-size: .97rem; line-height: 1.5; color: #3d3f66; padding-left: 16px; position: relative; margin-bottom: 8px; }
+.src-list li::before { content: '✂'; position: absolute; left: -2px; top: 1px; font-size: .75rem; color: var(--muted); }
+.src-list .what { display: block; color: var(--muted); font-size: .92rem; }
+
+.footer {
+  margin-top: 44px;
+  padding-top: 18px;
+  border-top: 2px dashed rgba(44,47,94,.22);
+  font-size: .95rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.footer a { color: var(--ink); }
+</style>
+
+</head>
+<body class="faq-page">
+<div class="app" id="app"></div>
+<script>
+// ---------- paper helpers ----------
+function hashStr(s) {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function rng(seed) {
+  let a = seed;
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+// Torn-edge polygon. Offsets are in px so the tear looks the same on any size of paper.
+function tear(r, amp, nx = 16, ny = 6) {
+  const p = [];
+  const j = () => (r() * amp).toFixed(1);
+  for (let i = 0; i <= nx; i++) p.push(`${(i / nx * 100).toFixed(1)}% ${j()}px`);
+  for (let i = 1; i < ny; i++) p.push(`calc(100% - ${j()}px) ${(i / ny * 100).toFixed(1)}%`);
+  for (let i = nx; i >= 0; i--) p.push(`${(i / nx * 100).toFixed(1)}% calc(100% - ${j()}px)`);
+  for (let i = ny - 1; i >= 1; i--) p.push(`${j()}px ${(i / ny * 100).toFixed(1)}%`);
+  return `polygon(${p.join(',')})`;
+}
+function paperStyle(seed, color, maxRot = 1.2) {
+  const r = rng(hashStr(seed));
+  const rot = ((r() * 2 - 1) * maxRot).toFixed(2);
+  return `--c:${color};--rot:${rot}deg;--tf:${tear(r, 3.5)};--tb:${tear(r, 2)}`;
+}
+function starSVG() {
+  return `<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l2.7 6 6.5.6-4.9 4.4 1.5 6.4L12 16.5l-5.8 3.3 1.5-6.4-4.9-4.4 6.5-.6z" fill="#f2c85b" stroke="#fffdf8" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+}
+function arrowSVG() {
+  return `<svg viewBox="0 0 22 30" fill="none" aria-hidden="true">
+    <path d="M11 2 Q 8 12, 11 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 4"/>
+    <path d="M6 18 L11 25 L16 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+function backArrowSVG() {
+  return `<svg viewBox="0 0 20 16" fill="none" aria-hidden="true">
+    <path d="M9 1 L1 8 L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M1 8 L19 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>`;
+}
+
+
+const COLORS = ['var(--blue)','var(--peach)','var(--rose)','var(--lilac)','var(--sage)'];
+const PALE = ['#e4ecf9','#fbe8dc','#f8e1e8','#ebe6f8','#e3f0e3'];
+
+const FAQ = [
+  { q: 'What is this?',
+    a: `<p>A handful of small puzzles about the "plumbing" behind US interest rates: how the Federal Reserve gets short-term rates where it wants them, and how money moves between banks, money market funds, the Treasury and the Fed.</p>` },
+  { q: 'Do I need a finance background?',
+    a: `<p>No. Every term gets explained in the puzzle explainers, and there's a <a href="#glossary">glossary</a> below if you get lost halfway through.</p>` },
+  { q: 'Is this up to date?',
+    a: `<p>Information is as of <strong>September 2026</strong>. The plumbing changes over time; for example, the Fed stopped shrinking its balance sheet on December 1st 2025 and has been buying Treasury bills since to keep reserves ample.</p><p>For today's numbers, the New York Fed publishes <a href="https://www.newyorkfed.org/markets/reference-rates/sofr" target="_blank" rel="noopener">SOFR and the other reference rates</a> every morning, and <a href="https://fred.stlouisfed.org/graph/?id=IORB%2CSOFR%2CEFFR%2C" target="_blank" rel="noopener">FRED</a> charts them over time.</p>` },
+  { q: `Why don't the rates always line up in the same order?`,
+    a: `<p>Because only some of them are set by the Fed. The Fed sets three rates directly (the standing repo rate, interest on reserve balances, and the overnight reverse repo rate), and their order is a policy choice. Think of them as fences.</p><p>Market rates like SOFR and the Fed Funds rate are set every day by borrowers and lenders, so they move around inside, and sometimes outside, those fences depending on how much cash is in the system. The Fed describes this in terms of reserves being <em>abundant</em>, <em>ample</em> or <em>scarce</em>: when cash is plentiful, market rates sink toward the floor, and when it's tight, they push toward (or through) the ceiling.</p>` },
+  { q: 'I have a comment, recommendation, and/or want to point out an error. How can I contact you?',
+    a: `<p>I'm always happy to hear feedback of all kinds. Email me at kuvernuit(at)gmail(dot)com to get in touch :)</p>` }
+];
+
+const GLOSSARY = [
+  ['Abundant / ample / scarce reserves', `The Fed's way of describing how much cash banks hold. Abundant: So much that the Fed Funds rate barely reacts to changes in reserves. Ample: Rates react a little. Scarce: Rates react sharply, and the Fed has to manage reserves actively.`],
+  ['Arbitrage', `Profiting from a price gap between two nearly identical things, like borrowing at one rate and lending at a higher one with little risk.`],
+  ['Balance sheet (the Fed\u2019s)', `What the Fed owns (assets, mostly Treasuries and mortgage-backed securities) and what it owes (liabilities, like bank reserves, physical cash and the Treasury\u2019s account). The two sides always match.`],
+  ['Basis', `The price gap between a Treasury bond and the futures contract tied to it.`],
+  ['Basis point (bp)', `One hundredth of a percentage point. 25 basis points = 0.25%.`],
+  ['Basis trade', `A hedge fund strategy: buy Treasury bonds, sell Treasury futures against them, and borrow in the repo market to fund the bonds.`],
+  ['Collateral', `An asset pledged to back a loan. If the borrower doesn\u2019t repay, the lender keeps it.`],
+  ['Debt ceiling (debt limit)', `A legal cap on how much the US government can borrow. When it binds, the Treasury runs down its cash; when it\u2019s raised, the Treasury issues lots of new debt to rebuild it.`],
+  ['Discount window', `The Fed\u2019s traditional lending facility for banks, charged at or near the top of the target range. Banks rarely use it because of the stigma.`],
+  ['EFFR (effective federal funds rate)', `The median rate on overnight unsecured loans between financial institutions. The Fed\u2019s official policy target; this is what people mean when they say "the Fed cut rates".`],
+  ['FHLBs (Federal Home Loan Banks)', `Eleven government-sponsored banks that lend to support mortgage lending. They\u2019re the biggest lenders in the fed funds market.`],
+  ['FOMC', `The Federal Open Market Committee, the group within the Fed that votes on the target range for interest rates.`],
+  ['Futures (Treasury)', `Standardised contracts to buy or sell a Treasury bond at a set price on a future date. They trade on an exchange and only need a small deposit (margin) up front.`],
+  ['GSE (government-sponsored enterprise)', `A privately owned company created by Congress to support a type of lending. FHLBs, Fannie Mae and Freddie Mac are GSEs.`],
+  ['IORB (interest on reserve balances)', `The interest the Fed pays banks on cash they hold at the Fed. Set inside the target range, it acts as a magnet for other short-term rates. Called IOER before 2021.`],
+  ['Leverage', `Using borrowed money to make a bigger bet than your own capital allows. Magnifies both gains and losses.`],
+  ['LIBOR', `The London Interbank Offered Rate, an old benchmark rate that was phased out after a manipulation scandal and replaced by SOFR.`],
+  ['Margin', `The deposit you post with an exchange to hold a futures position, topped up or paid out every day as prices move.`],
+  ['MBS (mortgage-backed securities)', `Bonds made of bundled home mortgages. The Fed bought lots of them during QE.`],
+  ['Money market fund (MMF)', `A fund that invests in very safe, very short-term assets like T-bills and repo. Where a lot of cash from households and companies ends up.`],
+  ['ON RRP (overnight reverse repo)', `A Fed facility where money market funds and others can lend cash to the Fed overnight. Its rate sits at the bottom of the target range and acts as a floor.`],
+  ['Primary dealer', `One of a couple dozen large banks and brokers that trade directly with the Fed and are expected to bid at Treasury auctions.`],
+  ['QE (quantitative easing)', `The Fed creating new money to buy bonds in large amounts, pushing cash into the financial system and lowering long-term rates.`],
+  ['QT (quantitative tightening)', `The reverse of QE: letting bonds mature without replacing them, so the balance sheet and the amount of cash in the system shrink.`],
+  ['Repo (repurchase agreement)', `A short-term loan where the borrower sells a bond and agrees to buy it back later at a slightly higher price. Effectively a collateralised loan, usually overnight.`],
+  ['Reserve management purchases (RMPs)', `The Fed buying short-term Treasury bills to keep reserves from getting too scarce. Not QE: the aim is controlling short-term rates, not easing policy.`],
+  ['Reserves', `Cash that banks hold in their accounts at the Fed. The system\u2019s ultimate settlement money.`],
+  ['SOFR (secured overnight financing rate)', `The average cost of borrowing cash overnight with Treasuries as collateral. The main benchmark rate for loans and derivatives since LIBOR ended.`],
+  ['SOMA (System Open Market Account)', `The Fed\u2019s portfolio of securities, managed by the New York Fed.`],
+  ['Standing repo facility (SRF)', `A Fed facility where banks and primary dealers can borrow cash overnight against Treasuries. Its rate sits at the top of the target range as a (soft) ceiling. The Fed now calls these standing repo operations.`],
+  ['Target range', `The 25-basis-point range the FOMC sets for the fed funds rate, e.g. 3.75%\u20134.00%.`],
+  ['TGA (Treasury General Account)', `The US government\u2019s checking account at the Fed. When it fills up (tax day, big debt sales), cash drains out of the banking system.`],
+  ['Treasury bill (T-bill)', `US government debt that matures in a year or less. Very safe and very short-term.`],
+  ['Treasury note / bond', `Longer-term US government debt that pays interest (coupons) twice a year. Notes mature in 2\u201310 years, bonds in 20\u201330.`]
+];
+
+const L = (href, text) => `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;
+const SOURCES = [
+  { head: 'Puzzle 1: The fed funds funding circuit', items: [
+    [L('https://libertystreeteconomics.newyorkfed.org/2023/10/whos-borrowing-and-lending-in-the-fed-funds-market-today/', 'Who\u2019s Borrowing and Lending in the Fed Funds Market Today?'), 'Liberty Street Economics, New York Fed, Oct 2023'],
+    [L('https://www.newyorkfed.org/newsevents/speeches/2024/per240926', 'Balance Sheet Normalization: Monitoring Reserve Conditions and Understanding Repo Market Pressures'), 'Roberto Perli, New York Fed, Sep 2024'],
+    [L('https://www.newyorkfed.org/newsevents/speeches/2026/per260326', 'Reflections on the Early Days of Reserve Management Purchases'), 'Roberto Perli, New York Fed, Mar 2026 (how FHLB lending shifted in late 2025)']
+  ]},
+  { head: 'Puzzle 2: Stack the rates', items: [
+    [L('https://fred.stlouisfed.org/graph/?id=IORB%2CSOFR%2CEFFR%2C', 'IORB, SOFR and EFFR daily data'), 'FRED, St. Louis Fed'],
+    [L('https://www.federalreserve.gov/econres/notes/feds-notes/what-happened-in-money-markets-in-september-2019-20200227.html', 'What Happened in Money Markets in September 2019?'), 'FEDS Notes, Federal Reserve Board, Feb 2020'],
+    [L('https://www.newyorkfed.org/newsevents/speeches/2025/per251112', 'Money Market Conditions and the Federal Reserve\u2019s Balance Sheet'), 'Roberto Perli, New York Fed, Nov 2025'],
+    [L('https://www.newyorkfed.org/medialibrary/media/markets/omo/omo2025-pdf.pdf', 'Open Market Operations During 2025'), 'New York Fed annual report (repo pressure and standing repo usage)'],
+    [L('https://libertystreeteconomics.newyorkfed.org/2024/08/when-are-central-bank-reserves-ample/', 'When Are Central Bank Reserves Ample?'), 'Liberty Street Economics, Aug 2024']
+  ]},
+  { head: 'Puzzle 3: Quantitative tightening', items: [
+    [L('https://www.federalreserve.gov/newsevents/pressreleases/monetary20251029a.htm', 'FOMC statement, 29 October 2025'), 'Decision to end balance sheet runoff on 1 December'],
+    [L('https://www.federalreserve.gov/newsevents/pressreleases/monetary20251210a.htm', 'FOMC statement, 10 December 2025'), 'Decision to begin reserve management purchases'],
+    [L('https://www.newyorkfed.org/markets/opolicy/operating_policy_251210a', 'Statement Regarding Reserve Management Purchases Operations'), 'New York Fed, Dec 2025'],
+    [L('https://www.newyorkfed.org/newsevents/speeches/2026/per260326', 'Reflections on the Early Days of Reserve Management Purchases'), 'Roberto Perli, New York Fed, Mar 2026']
+  ]},
+  { head: 'Puzzle 4: The basis trade', items: [
+    [L('https://www.federalreserve.gov/econres/notes/feds-notes/recent-developments-in-hedge-funds-treasury-futures-and-repo-positions-20230830.html', 'Recent Developments in Hedge Funds\u2019 Treasury Futures and Repo Positions: is the Basis Trade \u201cBack\u201d?'), 'FEDS Notes, Aug 2023'],
+    [L('https://www.federalreserve.gov/econres/notes/feds-notes/quantifying-treasury-cash-futures-basis-trades-accessible-20240308.htm', 'Quantifying Treasury Cash-Futures Basis Trades'), 'FEDS Notes, Mar 2024'],
+    [L('https://www.federalreserve.gov/econres/notes/feds-notes/decomposing-hedge-funds-u-s-treasury-exposures-20260622.html', 'Decomposing Hedge Funds\u2019 U.S. Treasury Exposures'), 'FEDS Notes, Jun 2026'],
+    ['<em>The Treasury Bond Basis</em>, Galen Burghardt & Terrence Belton', 'The classic book on futures and the basis (3rd ed.)']
+  ]}
+];
+
+const READING = [
+  { head: 'Gentle: Start here', items: [
+    [L('https://www.federalreserve.gov/aboutthefed/the-fed-explained.htm', 'The Fed Explained'), 'The Board of Governors\u2019 own guide to what the Fed is and does.'],
+    [L('https://libertystreeteconomics.newyorkfed.org/', 'Liberty Street Economics'), 'The New York Fed\u2019s blog. Short posts, often about Fed plumbing.'],
+    [L('https://www.newyorkfed.org/markets/domestic-market-operations/monetary-policy-implementation', 'Monetary Policy Implementation'), 'The New York Fed\u2019s own overview of how it hits its rate target.'],
+    [L('https://www.federalreservehistory.org/', 'Federal Reserve History'), 'Essays on the big episodes, from the Fed\u2019s founding to 2008. Great for context.']
+  ]},
+  { head: 'Mid-level', items: [
+    ['<em>Inside the Fed</em>, Stephen Axilrod', 'A long-time Fed staffer on how policy was made and implemented from William McChesney Martin to Ben Bernanke.'],
+    [L('https://www.newyorkfed.org/newsevents/speeches', 'New York Fed speeches'), 'Look for the ones by the SOMA manager and the markets group; they\u2019re the most detailed public account of how the plumbing is running.'],
+    ['<em>The New Lombard Street</em>, Perry Mehrling', 'How the Fed became the "dealer of last resort" in 2008. Useful for understanding the shift from traditional bank lending to capital market-based credit systems'],
+  ]},
+  { head: 'Deep end', items: [
+    [L('https://www.bis.org/publications/qr', 'BIS Quarterly Review') + ' and ' + L('https://www.bis.org/publications/bulletin', 'BIS Bulletins'), 'The central bankers\u2019 central bank, on global dollar funding and market plumbing.'],
+    ['Zoltan Pozsar\u2019s <em>Global Money Notes</em>', 'Writing on money markets from an economist\u2019s time at Credit Suisse.'],
+    ['<em>Money and the Public Debt</em>, Lev Menand & Josh Younger', 'A law review article on why Treasuries work like money, and how the rules around them shape the market.'],
+    ['<em>Monetary Theory and Policy</em>, Carl Walsh', 'The standard graduate textbook, heavy on models and math. For the truly committed.'],
+  ]}
+];
+
+function render() {
+  let h = `<a class="back-btn" href="index.html" style="text-decoration:none">${backArrowSVG()} Puzzles</a>`;
+  h += `<div class="page-title">About & FAQ</div>`;
+
+  h += `<div class="jump">`;
+  [['#faq','FAQ'],['#glossary','Glossary'],['#sources','Sources'],['#reading','Further reading']].forEach(([href, t], i) => {
+    h += `<a href="${href}"><div class="paper" style="${paperStyle('jump' + i, COLORS[i], 2)}"><span class="pc">${t}</span></div></a>`;
+  });
+  h += `</div>`;
+
+  h += `<div class="sec-title" id="faq">FAQ</div>`;
+  FAQ.forEach((f, i) => {
+    h += `<div class="paper faq-item" style="${paperStyle('faq' + i, PALE[i % 5], 0.5)}"><div class="pc">
+            <details><summary>${f.q}<span class="plus">+</span></summary><div class="faq-body">${f.a}</div></details>
+          </div></div>`;
+  });
+
+  h += `<div class="sec-title" id="glossary">Glossary</div>`;
+  h += `<div class="sec-intro">Plain-English definitions, alphabetical.</div><div class="gloss-grid">`;
+  GLOSSARY.forEach(([term, def], i) => {
+    const slug = term.toLowerCase().replace(/\(.*?\)/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    h += `<div class="paper gloss" id="g-${slug}" style="${paperStyle('g' + i, PALE[i % 5], 0.8)}">
+            <span class="pc"><span class="gloss-term">${term}</span><span class="gloss-def">${def}</span></span></div>`;
+  });
+  h += `</div>`;
+
+  const cards = (list, prefix) => list.map((c, i) => `
+    <div class="paper src-card" style="${paperStyle(prefix + i, PALE[(i + 1) % 5], 0.5)}"><span class="pc">
+      <span class="src-head">${c.head}</span>
+      <ul class="src-list">${c.items.map(([t, w]) => `<li>${t}<span class="what">${w}</span></li>`).join('')}</ul>
+    </span></div>`).join('');
+
+  h += `<div class="sec-title" id="sources">Sources</div>`;
+  h += `<div class="sec-intro">Public sources for the facts and figures in each puzzle.</div>`;
+  h += cards(SOURCES, 'src');
+
+  h += `<div class="sec-title" id="reading">Further reading</div>`;
+  h += `<div class="sec-intro">In rough order of depth.</div>`;
+  h += cards(READING, 'read');
+
+  h += `<div class="footer">
+          Made by Mia · <a href="mailto:kuvernuit.com">Email me here</a><br>
+          Information as of September 2026. Not investment advice; not affiliated with the Federal Reserve.
+        </div>`;
+
+  document.getElementById('app').innerHTML = h;
+  if (location.hash) { const el = document.querySelector(location.hash); if (el) el.scrollIntoView(); }
+}
+render();
+
+</script>
+</body>
+</html>

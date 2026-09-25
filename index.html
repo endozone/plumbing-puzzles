@@ -2,97 +2,122 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Rates Plumbing Puzzles</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Beth+Ellen&family=Caveat&family=Patrick+Hand&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Beth+Ellen&family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #f8faf3;
-  --dot: #ddd8ce;
-  --ink: #2d2d2d;
-  --muted: #8a857a;
-  --sky: #d4e4f7;
-  --peach: #f7e2cc;
-  --rose: #f2d4d4;
-  --lilac: #ddd0f0;
-  --sage: #cce6d0;
-  --correct: #4caf7c;
-  --wrong: #d06868;
-  --slot-border: #b0aa9e;
+  --dot: #d9d6e6;
+  --ink: #2c2f5e;
+  --muted: #7f7c9a;
+  --blue: #bccff0;
+  --peach: #f4c7aa;
+  --rose: #efbccb;
+  --lilac: #d2c9ef;
+  --sage: #c3dfc3;
+  --mustard: #f2d88f;
+  --sage-deep: #6fa37a;
+  --wrong: #c8607a;
+  --paper-edge: #fffdf8;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .17 0 0 0 0 .18 0 0 0 0 .37 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .17 0 0 0 0 .18 0 0 0 0 .37 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-html {
-  scroll-padding-top: env(safe-area-inset-top, 0px);
-}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); background: var(--bg); }
 
 body {
-  font-family: 'Patrick Hand', cursive, system-ui;
-  background: var(--bg);
-  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
-  background-size: 24px 24px;
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive, system-ui;
+  background-color: var(--bg);
+  background-image: var(--grain-soft), radial-gradient(circle, var(--dot) 1.2px, transparent 1.4px);
+  background-size: 160px 160px, 24px 24px;
   color: var(--ink);
   min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .app {
   max-width: 440px;
   margin: 0 auto;
-  padding: 20px 16px 40px;
+  padding: 20px 16px 48px;
 }
 
 @media (min-width: 700px) {
-  .app {
-    max-width: 760px;
-    padding: 40px 32px 56px;
-  }
+  .app { max-width: 760px; padding: 40px 32px 56px; }
   .puzzle-title { font-size: 2.6rem; }
   .landing-title { font-size: 3.4rem; }
 }
 
-/* ---- HEADER ---- */
-.puzzle-header { margin-bottom: 24px; }
+/* ============ PAPER CUTOUT ============ */
+/* Each .paper gets its own torn edge via --tf (front) and --tb (white fibre underlayer). */
+.paper {
+  position: relative;
+  --lift: 0px;
+  transform: translateY(var(--lift)) rotate(var(--rot, 0deg));
+  filter: drop-shadow(1px 2px 0 rgba(44,47,94,.13)) drop-shadow(0 4px 5px rgba(44,47,94,.10));
+  transition: transform .18s ease, filter .18s ease;
+}
+.paper::before,
+.paper::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+.paper::before {
+  inset: -3px;
+  background: var(--grain), var(--paper-edge);
+  clip-path: var(--tb);
+}
+.paper::after {
+  inset: 0;
+  background: var(--grain), var(--c, var(--lilac));
+  clip-path: var(--tf);
+}
+.pc { position: relative; z-index: 1; display: block; }
+
+/* ============ HEADER ============ */
+.puzzle-header { margin-bottom: 26px; }
 
 .progress-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
-.back-btn {
+.back-btn, .reset-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-family: 'Patrick Hand', cursive;
-  font-size: 0.95rem;
-  color: var(--ink);
+  gap: 5px;
+  font-family: inherit;
+  font-size: 1rem;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 6px 0;
 }
+.back-btn { color: var(--ink); }
+.reset-btn { color: var(--muted); }
+.back-btn svg { width: 16px; height: 16px; }
 
-.back-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
-.reset-btn {
-  font-family: 'Patrick Hand', cursive;
-  font-size: 0.95rem;
-  color: var(--muted);
-  background: none;
-  border: none;
+.dots { display: flex; gap: 9px; }
+.dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--muted);
   cursor: pointer;
-  padding: 4px 0;
+  transition: background .2s, border-color .2s;
 }
+.dot.active { background: var(--ink); border-color: var(--ink); }
+.dot.done { background: var(--sage-deep); border-color: var(--sage-deep); }
 
 .puzzle-title {
   font-family: 'Beth Ellen', cursive;
@@ -102,168 +127,137 @@ body {
   margin-bottom: 10px;
 }
 
-.puzzle-sub {
-  font-size: 1.05rem;
-  color: var(--muted);
-}
+.puzzle-sub { font-size: 1.08rem; color: var(--muted); }
 
-/* ---- FLOW / SLOTS ---- */
+/* ============ FLOW / SLOTS ============ */
 .flow {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0;
-  margin-bottom: 28px;
+  align-items: stretch;
+  margin-bottom: 30px;
 }
 
+/* empty slot = a quilt patch with stitching, waiting for its piece */
 .slot {
-  width: 100%;
-  min-height: 56px;
-  border: 2.5px dashed var(--slot-border);
-  border-radius: 4px 10px 6px 12px;
+  position: relative;
+  min-height: 64px;
+  border-radius: 10px;
+  background: var(--grain), rgba(210,201,239,.28);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 16px;
-  font-size: 1.05rem;
-  color: var(--slot-border);
-  text-align: center;
-  transition: all 0.2s;
-  position: relative;
   cursor: pointer;
-  line-height: 1.35;
+  transition: background .2s;
 }
-
-.slot.highlight {
-  border-color: var(--ink);
-  background: rgba(0,0,0,0.02);
-}
-
-.slot.filled {
-  border-style: solid;
-  border-color: #888;
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.slot.filled.correct {
-  border-color: var(--correct);
-}
-
-.slot .check {
+.slot::before {
+  content: '';
   position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.1rem;
-  opacity: 0;
-  transition: opacity 0.3s;
+  inset: 6px;
+  border: 2px dashed rgba(44,47,94,.28);
+  border-radius: 6px;
+  transition: border-color .2s;
+  pointer-events: none;
 }
+.slot.highlight { background: var(--grain), rgba(210,201,239,.55); }
+.slot.highlight::before { border-color: rgba(44,47,94,.6); }
 
-.slot.filled.correct .check {
-  opacity: 1;
-  color: var(--correct);
-}
-
-.slot.filled.wrong .check {
-  opacity: 1;
-  color: var(--wrong);
-}
+.slot.filled { background: none; min-height: 0; }
+.slot.filled::before { display: none; }
 
 .slot-num {
   position: absolute;
-  left: 10px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   font-family: 'Caveat', cursive;
-  font-size: 1.1rem;
-  color: var(--muted);
   font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--muted);
+  z-index: 1;
 }
 
-.slot.filled .slot-num { opacity: 0.4; }
+.slot .paper { width: 100%; }
+.slot .paper .pc {
+  padding: 14px 40px;
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+.slot .paper .slot-num { opacity: .55; }
 
-.arrow-down {
+.mark {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%) rotate(12deg);
+  z-index: 2;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 28px;
+}
+.mark.x {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--wrong);
+}
+
+.star { width: 100%; height: 100%; filter: drop-shadow(0 1px 1px rgba(44,47,94,.25)); }
+
+@keyframes stick {
+  0% { transform: translateY(-50%) rotate(-30deg) scale(0); }
+  70% { transform: translateY(-50%) rotate(18deg) scale(1.15); }
+  100% { transform: translateY(-50%) rotate(12deg) scale(1); }
+}
+.mark.fresh { animation: stick .35s ease-out; }
+
+/* thread arrows between slots */
+.arrow-down {
+  display: flex;
+  justify-content: center;
+  height: 30px;
   color: var(--muted);
 }
+.arrow-down svg { width: 22px; height: 30px; }
 
-.arrow-down svg {
-  width: 20px;
-  height: 24px;
-}
-
-/* ---- LABELS (for rate stack) ---- */
 .flow-label {
   font-family: 'Caveat', cursive;
-  font-size: 0.95rem;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: var(--muted);
   text-align: center;
-  margin-bottom: 4px;
-  font-weight: 700;
+  margin-bottom: 6px;
 }
+.flow-label.bottom { margin-top: 6px; margin-bottom: 0; }
 
-.flow-label.bottom { margin-top: 4px; margin-bottom: 0; }
-
-/* ---- BANK ---- */
+/* ============ BANK ============ */
 .bank-label {
   font-family: 'Caveat', cursive;
-  font-size: 1.1rem;
-  color: var(--muted);
-  margin-bottom: 10px;
+  font-size: 1.25rem;
   font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 12px;
 }
 
 .bank {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 24px;
+  gap: 12px 10px;
+  margin-bottom: 26px;
   min-height: 48px;
 }
 
-.piece {
-  padding: 10px 14px;
-  border: 2.5px solid #555;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
-  line-height: 1.3;
-  user-select: none;
-  -webkit-user-select: none;
-  position: relative;
-}
-
-.piece:active { transform: scale(0.97); }
-
+.piece { cursor: pointer; user-select: none; -webkit-user-select: none; }
+.piece .pc { padding: 11px 15px; font-size: .98rem; line-height: 1.3; }
+.piece:active { --lift: 1px; }
 .piece.selected {
-  box-shadow: 0 0 0 3px var(--ink);
-  transform: scale(1.03);
+  --lift: -5px;
+  filter: drop-shadow(1px 2px 0 rgba(44,47,94,.18)) drop-shadow(0 10px 10px rgba(44,47,94,.18));
 }
+.piece.selected .pc { text-decoration: underline wavy rgba(44,47,94,.35); text-underline-offset: 4px; }
 
-.piece.placed {
-  opacity: 0;
-  pointer-events: none;
-  position: absolute;
-}
-
-/* hand-drawn corners */
-.hd-1 { border-radius: 4px 10px 6px 12px; transform: rotate(-0.6deg); }
-.hd-2 { border-radius: 8px 4px 10px 6px; transform: rotate(0.4deg); }
-.hd-3 { border-radius: 6px 12px 4px 8px; transform: rotate(-0.3deg); }
-.hd-4 { border-radius: 10px 6px 8px 4px; transform: rotate(0.5deg); }
-.hd-5 { border-radius: 4px 8px 12px 6px; transform: rotate(-0.7deg); }
-
-.piece.selected.hd-1 { transform: rotate(-0.6deg) scale(1.03); }
-.piece.selected.hd-2 { transform: rotate(0.4deg) scale(1.03); }
-.piece.selected.hd-3 { transform: rotate(-0.3deg) scale(1.03); }
-.piece.selected.hd-4 { transform: rotate(0.5deg) scale(1.03); }
-.piece.selected.hd-5 { transform: rotate(-0.7deg) scale(1.03); }
-
-/* ---- SHAKE ---- */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-6px); }
@@ -271,84 +265,74 @@ body {
   60% { transform: translateX(-4px); }
   80% { transform: translateX(4px); }
 }
-.shake { animation: shake 0.35s ease; }
+.shake { animation: shake .35s ease; }
 
-/* ---- COMPLETION ---- */
+/* ============ COMPLETION + EXPLAINER ============ */
 .completion {
-  text-align: center;
-  padding: 16px 0 8px;
-  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 0 18px;
 }
-
+.completion .star-wrap { width: 34px; height: 34px; transform: rotate(-10deg); }
 .completion-text {
   font-family: 'Caveat', cursive;
-  font-size: 1.6rem;
+  font-size: 1.9rem;
   font-weight: 700;
-  color: var(--correct);
+  color: var(--ink);
 }
-
-/* ---- EXPLAINER ---- */
-.explainer {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease;
-}
-
-.explainer.show { max-height: 2000px; }
 
 .explainer-title {
   font-family: 'Caveat', cursive;
-  font-size: 1.3rem;
+  font-size: 1.45rem;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
-.explain-item {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 14px;
-  padding-left: 2px;
-}
+.explain-item { display: flex; gap: 14px; margin-bottom: 18px; }
 
 .explain-bar {
-  width: 4px;
-  border-radius: 2px;
+  width: 6px;
+  border-radius: 2px 4px 3px 2px;
   flex-shrink: 0;
+  background: var(--grain), var(--c);
 }
 
-.explain-body { flex: 1; }
+.explain-body { flex: 1; min-width: 0; }
 
 .explain-step {
   font-family: 'Caveat', cursive;
   font-weight: 700;
-  font-size: 1.05rem;
-  margin-bottom: 2px;
+  font-size: 1.2rem;
+  margin-bottom: 3px;
 }
 
 .explain-text {
-  font-size: 0.92rem;
-  line-height: 1.55;
-  color: #4a4740;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a4a6a;
 }
 
-/* ---- NAV ---- */
-.nav-btn {
+/* ============ BUTTONS ============ */
+.paper-btn {
+  display: block;
   width: 100%;
-  padding: 14px;
-  font-family: 'Patrick Hand', cursive;
-  font-size: 1.1rem;
-  border: 2.5px solid #555;
-  border-radius: 6px 12px 8px 10px;
-  background: var(--bg);
+  margin-top: 14px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 1.12rem;
   color: var(--ink);
   cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.12s;
 }
+.paper-btn .pc { padding: 15px; }
+.paper-btn:active { --lift: 1px; }
 
-.nav-btn:active { background: #eee8dd; }
+.footer-link-btn { text-decoration: none; margin-top: 0; margin-bottom: 18px; }
+.footer-link-btn .pc { padding: 12px; font-size: 1.02rem; }
 
-/* ---- LANDING ---- */
+/* ============ LANDING ============ */
 .landing { padding-top: 20px; }
 
 .landing-title {
@@ -356,75 +340,245 @@ body {
   font-size: 36px;
   font-weight: 400;
   line-height: 1.4;
-  margin-bottom: 28px;
-}
-
-.landing-sub {
-  font-size: 1.05rem;
-  color: var(--muted);
   margin-bottom: 32px;
-  line-height: 1.5;
 }
 
-.puzzle-card {
-  border: 2.5px solid #555;
-  padding: 16px 18px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  transition: background 0.12s;
+.puzzle-card { cursor: pointer; margin-bottom: 16px; }
+.puzzle-card .pc {
   display: flex;
   align-items: center;
   gap: 14px;
+  padding: 18px 20px;
 }
+.puzzle-card:active { --lift: 1px; }
 
-.puzzle-card:active { background: #eee8dd; }
-
-.puzzle-card .card-num {
+.card-num {
   font-family: 'Caveat', cursive;
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: 700;
   color: var(--muted);
   flex-shrink: 0;
-  width: 28px;
+  width: 26px;
   text-align: center;
 }
 
-.puzzle-card .card-info h3 {
+.card-info h3 {
   font-family: 'Beth Ellen', cursive;
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 1.5;
   margin-bottom: 4px;
 }
 
-.puzzle-card .card-info p {
-  font-size: 0.88rem;
+.card-info p { font-size: .92rem; color: #5d5b7c; }
+
+.card-check {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  transform: rotate(14deg);
+  opacity: 0;
+}
+.puzzle-card.completed .card-check { opacity: 1; }
+
+/* ============ SECTIONS / FORK ============ */
+.fork-label {
+  font-family: 'Caveat', cursive;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: center;
+  margin: 2px 0 10px;
+}
+.section-label {
+  font-family: 'Caveat', cursive;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 6px 0 8px 4px;
+}
+.section-gap { height: 18px; }
+
+/* ============ NOTES ============ */
+.note-paper { margin: 4px 0 22px; }
+.note-paper .pc { padding: 14px 18px 16px; font-size: 1rem; line-height: 1.55; color: #3d3f66; }
+.note-head {
+  display: block;
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+/* ============ PART 2: CORRIDOR ============ */
+.part-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 14px;
+  color: var(--muted);
+}
+.part-divider::before, .part-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 2px dashed rgba(44,47,94,.22);
+}
+.part-title {
+  font-family: 'Beth Ellen', cursive;
+  font-size: 1.55rem;
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+.part-intro { font-size: 1.02rem; line-height: 1.55; color: #4a4a6a; margin-bottom: 18px; }
+
+.snap-head { margin-bottom: 10px; }
+.snap-count { font-size: .95rem; color: var(--muted); }
+.snap-title {
+  font-family: 'Caveat', cursive;
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.snap-regime { font-size: 1rem; color: #5d5b7c; }
+
+.corridor { display: flex; flex-direction: column; margin: 12px 0 22px; }
+
+.zone {
+  position: relative;
+  min-height: 70px;
+  padding: 30px 12px 12px;
+  border-radius: 10px;
+  background: var(--grain), rgba(210,201,239,.22);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s;
+}
+.zone::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 2px dashed rgba(44,47,94,.22);
+  border-radius: 6px;
+  pointer-events: none;
+  transition: border-color .2s;
+}
+.zone.highlight { background: var(--grain), rgba(210,201,239,.5); }
+.zone.highlight::before { border-color: rgba(44,47,94,.55); }
+.zone-label {
+  position: absolute;
+  top: 9px;
+  left: 14px;
+  font-size: .9rem;
   color: var(--muted);
 }
 
-.puzzle-card .card-check {
-  margin-left: auto;
-  font-size: 1.2rem;
-  color: var(--correct);
-  opacity: 0;
+.fence { margin: 5px -6px; z-index: 1; }
+.fence .pc {
+  padding: 7px 14px;
+  font-size: .95rem;
+  text-align: center;
+  line-height: 1.3;
+}
+.fence-role { font-family: 'Caveat', cursive; font-weight: 700; font-size: 1.1rem; margin-right: 6px; }
+
+.tag { cursor: pointer; user-select: none; -webkit-user-select: none; }
+.tag .pc { padding: 7px 14px; font-size: 1rem; white-space: nowrap; }
+.tag.selected {
+  --lift: -5px;
+  filter: drop-shadow(1px 2px 0 rgba(44,47,94,.18)) drop-shadow(0 10px 10px rgba(44,47,94,.18));
+}
+.tag.selected .pc { text-decoration: underline wavy rgba(44,47,94,.35); text-underline-offset: 4px; }
+.tag.placed { cursor: default; }
+.tag-val { font-weight: 400; color: #4a4a6a; margin-left: 4px; }
+
+.explain-sub {
+  font-family: 'Caveat', cursive;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 22px 0 12px;
 }
 
-.puzzle-card.completed .card-check { opacity: 1; }
+/* ============ A11Y ============ */
+[role="button"]:focus-visible, button:focus-visible, .dot:focus-visible {
+  outline: 2px dashed var(--ink);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
 
+/* ============ STICKERS ============ */
+.sticker {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  filter: drop-shadow(0 2px 2px rgba(44,47,94,.18)) drop-shadow(0 6px 8px rgba(44,47,94,.12));
+}
+.landing { position: relative; }
+.sticker-tap { width: 84px; top: 0; right: 0; transform: rotate(8deg); }
+
+.site-footer {
+  position: relative;
+  padding-top: 18px;
+  padding-right: 84px;
+  border-top: 2px dashed rgba(44,47,94,.22);
+  font-size: .95rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.site-footer a { color: var(--ink); }
+.sticker-clock { width: 68px; top: -34px; right: 10px; transform: rotate(-10deg); }
+
+/* desk stickers: only when there's real margin beside the page */
+.sticker-desk { position: fixed; display: none; z-index: 0; }
+@media (min-width: 700px) {
+  .sticker-tap { width: 130px; top: 4px; right: 24px; }
+  .sticker-clock { width: 84px; top: -44px; }
+  .site-footer { padding-right: 100px; }
+}
+@media (min-width: 1240px) {
+  .sticker-desk { display: block; }
+  .sticker-bond  { width: 175px; left: max(16px, calc(50% - 590px)); top: 30vh; transform: rotate(-8deg); }
+  .sticker-scale { width: 160px; right: max(16px, calc(50% - 580px)); top: 46vh; transform: rotate(6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
 </style>
 </head>
 <body>
 <div class="app" id="app"></div>
 
+<footer class="app site-footer" style="text-align:center">
+  <img class="sticker sticker-clock" src="stickers/clock.png" alt="" aria-hidden="true">
+  <a href="faq.html" class="paper paper-btn footer-link-btn" id="aboutLinkBtn"><span class="pc">About, glossary & sources</span></a>
+  <p>
+    Made by Mia · <a href="mailto:kuvernuit@gmail.com">Email me here</a><br>
+    Information as of September 2026. Not investment advice; not affiliated with the Federal Reserve.
+  </p>
+</footer>
+<img class="sticker sticker-desk sticker-bond" src="stickers/bond.png" alt="" aria-hidden="true">
+<img class="sticker sticker-desk sticker-scale" src="stickers/scale.png" alt="" aria-hidden="true">
+
 <script>
-const COLORS = ['var(--sky)','var(--peach)','var(--rose)','var(--lilac)','var(--sage)'];
-const HD = ['hd-1','hd-2','hd-3','hd-4','hd-5'];
+const COLORS = ['var(--blue)','var(--peach)','var(--rose)','var(--lilac)','var(--sage)'];
 
 const puzzles = [
   {
     title: 'The fed funds funding circuit',
     sub: 'What actually drives the overnight lending market',
     type: 'flow',
+    note: {
+      head: 'When does this hold?',
+      text: `This circuit describes the fed funds market when reserves were abundant, roughly mid-2020 to late 2025. It depends on fed funds trading comfortably below IORB, which leaves room for the foreign banks' profit. As reserves got scarcer in late 2025, repo rates rose, and FHLBs moved some of their lending into repo and used those higher rates to push fed funds rates up. The fed funds rate went from about 7 basis points below IORB to about 1 basis point below, which squeezes the arbitrage to almost nothing. At the same time, more domestic banks started borrowing in fed funds because they actually needed the cash.`
+    },
     steps: [
       { id:'a', text:'Federal Home Loan Banks (FHLBs) issue overnight discount notes', color: 0,
         explain:'FHLBs are a system of 11 government-sponsored cooperative banks that exist to support mortgage lending across the U.S. To fund their daily operations, they issue overnight discount notes - essentially short-term IOUs - sold mainly to money market funds. The interest rate they pay on these notes is typically below the Federal Funds Rate.' },
@@ -441,37 +595,72 @@ const puzzles = [
   {
     title: 'Stack the rates: ceiling to floor',
     sub: 'How the Fed keeps short-term rates in the target range',
-    type: 'stack',
+    type: 'corridor',
+    partA: `Part 1: Let's start with the three rates that the Fed sets itself. Stack them from top to bottom.`,
     topLabel: 'ceiling',
     bottomLabel: 'floor',
     steps: [
-      { id:'a', text:'Standing Repo Facility (SRF)', color: 2,
-        explain:'The SFR is where banks and primary dealers (large financial firms that trade directly with the Fed) can borrow cash overnight from the Fed by pledging Treasury bonds as collateral. If short-term market rates spike above this level, banks can just borrow from the Fed instead, which puts a cap on how high rates can go. In practice, it’s not a perfectly firm ceiling: banks are reluctant to use it because there’s a stigma attached to borrowing from the central bank (i.e. it signals you couldn’t get funding in the open market).' },
-      { id:'b', text:'Secured Overnight Financing Rate (SOFR)', color: 1,
-        explain:'SOFR measures the average cost of borrowing cash overnight using Treasury bonds as collateral. “Secured” means the borrower posts collateral, unlike fed funds lending which is unsecured. You may have heard of London Interbank Offered Rate (LIBOR), the old benchmark rate that was phrased out in 2021 after a manipulation scandal. SOFR is essentially its replacement. Most new loans, mortgages, derivatives, and financial contracts now reference SOFR. It’s not the Fed’s official policy target, but it’s become one of the most important interest rates in the financial system.' },
-      { id:'c', text:'Interest on Reserve Balances (IORB)', color: 3,
-        explain:'This is arguably the Fed’s most important policy tool. IORB is the interest rate the Fed pays banks for holding cash at the Federal Reserve. It acts like a magnet for all other short-term rates. Since banks can always earn IORB risk-free by parking cash at the Fed, they won’t lend money to anyone else for less than that. This pulls every other overnight rate in the market toward IORB. It’s only available to depository institutions (i.e. banks), not to money market funds, FHLBs, or other financial entities.' },
-      { id:'d', text:'Effective Federal Funds Rate (EFFR)', color: 0,
-        explain:'This is what is referred to when the Fed "raises/lowers rates". The EFFR is calculated daily as the median rate on overnight unsecured lending between financial institutions. It’s the Fed’s official policy target. It typically prints a few basis points below IORB because the main lenders in this market - FHLBs - can’t earn IORB themselves. So borrowing banks can get funds from them at a slight discount and still profit by depositing the cash at the Fed to earn IORB.' },
-      { id:'e', text:'Overnight Reverse Repo (ON RRP)', color: 4,
-        explain:'The ON RRP is a facility where money market funds and other eligible entities can lend cash to the Fed overnight, receiving Treasury bonds as collateral in return. It acts as a floor on short-term rates. If rates in the open market drop too low, these entities can always park their cash with the Fed at the ON RRP rate instead. Since December 2024, the Fed has deliberately set this rate at the very bottom of the range to discourage overuse, since the Fed prefers cash flowing through private markets rather than sitting at the central bank.' }
-    ]
+      { id:'a', text:'Standing repo rate (SRF)', color: 2,
+        explain:`The Standing Repo Facility (the Fed now calls these "standing repo operations") is where banks and primary dealers (large financial firms that trade directly with the Fed) can borrow cash overnight from the Fed by pledging Treasury bonds as collateral. If short-term market rates spike above this level, banks can just borrow from the Fed instead, which puts a cap on how high rates can go. In practice, it’s not a perfectly firm ceiling: banks are reluctant to use it because there’s a stigma attached to borrowing from the central bank (i.e. it signals you couldn’t get funding in the open market).` },
+      { id:'b', text:'Interest on Reserve Balances (IORB)', color: 3,
+        explain:`IORB is the interest rate the Fed pays banks for holding cash at the Federal Reserve. It acts like a magnet for all other short-term rates. Since banks can always earn IORB risk-free by parking cash at the Fed, they won’t lend money to anyone else for less than that. This pulls every other overnight rate in the market toward IORB. It’s only available to depository institutions (i.e. banks), not to money market funds, FHLBs, or other financial entities.` },
+      { id:'c', text:'Overnight Reverse Repo (ON RRP)', color: 4,
+        explain:`The ON RRP is a facility where money market funds and other eligible entities can lend cash to the Fed overnight, receiving Treasury bonds as collateral in return. It acts as a floor on short-term rates. If rates in the open market drop too low, these entities can always park their cash with the Fed at the ON RRP rate instead. Since December 2024, the Fed has deliberately set this rate at the very bottom of the range to discourage overuse, since the Fed prefers cash flowing through private markets rather than sitting at the central bank.` }
+    ],
+    partB: {
+      title: 'Part 2: Where do the market rates sit?',
+      intro: `SOFR and the Fed Funds rate aren't set by the Fed. They're set by borrowers and lenders every day, so they move around inside (and sometimes outside) the Fed's fences depending on how much cash is in the system. Try to figure out how the rates traded in three different scenarios below.`,
+      zones: ['Above the ceiling', 'Above IORB, up to the ceiling', 'Between the floor and IORB', 'At or below the floor'],
+      fenceColors: { ceiling: 'var(--rose)', iorb: 'var(--lilac)', floor: 'var(--sage)' },
+      markers: [
+        { id:'sofr', label:'SOFR', long:'secured repo rate', color:'var(--peach)',
+          explain:`The Secured Overnight Financing Rate measures the average cost of borrowing cash overnight using Treasury bonds as collateral. "Secured" means the borrower posts collateral, unlike fed funds lending, which is unsecured. You may have heard of the London Interbank Offered Rate (LIBOR), the old benchmark that was phased out after a manipulation scandal. SOFR is essentially its replacement, and most new loans, derivatives and financial contracts now reference it. Because the repo market is huge and cash-hungry (hedge funds, dealers), SOFR is the most sensitive of these rates to how much cash is around: it hugs the floor when cash is plentiful and jumps above IORB, sometimes above the ceiling, when cash gets tight.` },
+        { id:'effr', label:'EFFR', long:'fed funds rate', color:'var(--blue)',
+          explain:`The Effective Federal Funds Rate is what's being referred to when the Fed "raises/lowers rates". It's calculated daily as the median rate on overnight unsecured lending between financial institutions, and it's the Fed's official policy target. When reserves are abundant, it prints a few basis points below IORB, because the main lenders in this market, the FHLBs, can't earn IORB themselves (see Puzzle 1). As cash gets scarcer, higher repo rates drag it up toward IORB, and in a real squeeze it can break out of the target range entirely.` }
+      ],
+      snapshots: [
+        { title: 'December 2021', regime: 'Abundant reserves',
+          fences: { ceiling: 'standing repo 0.25%', iorb: 'IORB 0.15%', floor: 'ON RRP 0.05%' },
+          values: { sofr: '0.05%', effr: '0.08%' },
+          answers: { sofr: 3, effr: 2 },
+          note: `The pandemic-era QE had flooded the system with cash, while safe short-term assets like T-bills were relatively scarce. Money market funds had so much cash and so few places to put it that over $1.5 trillion sat in the Fed's ON RRP facility, and repo rates were pinned right at the floor. Fed funds sat in the middle of the corridor, a few basis points below IORB, because its main lenders, the FHLBs, can't earn IORB themselves.` },
+        { title: 'November 2025', regime: 'Ample reserves, but getting tight',
+          fences: { ceiling: 'standing repo 4.00%', iorb: 'IORB 3.90%', floor: 'ON RRP 3.75%' },
+          values: { sofr: '4.00%', effr: '3.88%' },
+          answers: { sofr: 1, effr: 2 },
+          note: `After three years of QT and a big rebuild of the Treasury's cash account, the ON RRP cushion was essentially empty, so repo lenders had to be paid more to part with cash. SOFR climbed above IORB and right up to the ceiling, and Fed Funds got dragged up to 2 basis points below IORB, its highest point in the range since early 2021. On busier days SOFR broke through the ceiling entirely: on October 31 it hit 4.22%, and firms borrowed a record amount from the standing repo facility. The Fed ended QT on December 1.` },
+        { title: 'September 2019', regime: 'Scarce reserves',
+          fences: { ceiling: 'top of range 2.25% (no standing repo facility yet!)', iorb: 'IORB, then called IOER, 2.10%', floor: 'ON RRP 2.00%' },
+          values: { sofr: '5.25%', effr: '2.30%' },
+          answers: { sofr: 0, effr: 0 },
+          note: `The first round of QT (2017–19) had drained reserves directly, and nobody knew exactly how low was too low. In mid-September, a corporate tax deadline and Treasury bond settlements pulled even more cash out of the system at once. SOFR jumped from 2.43% to 5.25% overnight, with some trades as high as 10%, and Fed Funds broke above the top of the target range for the first time since the 2008 financial crisis. There was no standing repo facility to act as a ceiling, so the New York Fed ran emergency repo operations that morning. This episode is a big part of why the standing repo facility was made permanent in 2021.` }
+      ]
+    }
   },
   {
     title: 'What happens under quantitative tightening',
     sub: 'Policy changes that shrink the Fed’s balance sheet',
     type: 'flow',
+    sections: [
+      { ids: ['a','b','c'] },
+      { fork: 'Which liability shrinks? It depends on the era.', label: 'First round: 2017–2019', ids: ['d1','d2'] },
+      { label: 'Second round: 2022–2025', ids: ['e1','e2'] }
+    ],
     steps: [
       { id:'a', text:'Fed lets maturing securities roll off', color: 0,
-        explain:'After the pandemic, the Fed bought trillions of dollars in Treasury bonds and mortgage-backed securities (MBS) to pump cash into the economy. This is called quantitative easing, or QE. Under QE, the Fed creates new money and uses it to buy bonds, pushing cash into the financial system and lowering long-term interest rates. Quantitative tightening (QT) is the opposite: as those bonds mature, the Fed just lets them expire. The Fed controls the pace with monthly caps.' },
+        explain:`After the pandemic, the Fed bought trillions of dollars in Treasury bonds and mortgage-backed securities (MBS) to pump cash into the economy. This is called quantitative easing, or QE. Under QE, the Fed creates new money and uses it to buy bonds, pushing cash into the financial system and lowering long-term interest rates. Quantitative tightening (QT) is the opposite: as those bonds mature, the Fed just lets them expire instead of buying new ones. The Fed controls the pace with monthly caps.` },
       { id:'b', text:'Balance sheet assets shrink', color: 1,
-        explain:'As bonds mature and aren’t replaced, the Fed’s total assets decline. The balance sheet peaked at about $9 trillion and has come down to roughly $6.7 trillion by mid-2025. The assets are mostly the Treasury bonds and mortgage-backed securities the Fed bought during QE, held in a portfolio called the SOMA (System Open Market Account).' },
+        explain:`As bonds mature and aren't replaced, the Fed's total assets decline. The assets are mostly the Treasury bonds and mortgage-backed securities the Fed bought during QE, held in a portfolio called the SOMA (System Open Market Account). The second round of QT took the balance sheet down by about $2.4 trillion, from a peak of around $9 trillion.` },
       { id:'c', text:'Some liability must shrink by the same amount', color: 2,
-        explain:'A balance sheet is balanced, with assets equalling liabilities. So when assets shrink by a dollar, some liability must also shrink by a dollar. The Fed’s main liabilities are: bank reserves (cash that banks hold at the Fed), currency in circulation (physical dollar bills), the Treasury General Account or TGA (essentially the US government’s checking account at the Fed), and the ON RRP facility. The critical question for markets is: which of these absorbs the drain?' },
-      { id:'d', text:'ON RRP drains first', color: 3,
-        explain:'In practice, almost all of the shrinkage came from the ON RRP facility, not from bank reserves. ON RRP balances dropped from about $2.5 trillion in late 2022 to near zero. Why did reserves stay stable? Banks chose to hold onto their cash as precautionary cushions — partly because of the 2023 regional bank failures (SVB, Signature Bank), unrealized losses on their bond portfolios from the rate hiking cycle, and stricter liquidity requirements from regulators. Because the drain came from ON RRP rather than reserves, the banking system stayed comfortable even as the Fed’s balance sheet shrank significantly.' },
-      { id:'e', text:'Funding stress risk occurs', color: 4,
-        explain:'Once the ON RRP buffer is fully depleted, every additional dollar of QT comes directly out of bank reserves. Reserves are what banks use for daily payments and to meet regulatory liquidity requirements, so draining them gets uncomfortable quickly. The cautionary precedent is September 2019, when the Fed drained too many reserves and overnight lending rates spiked unexpectedly, forcing the Fed to restart emergency lending operations. BofA’s rates team estimates QT will need to stop by the end of 2025 to avoid a similar episode of funding market stress.' }
+        explain:`A balance sheet is balanced, with assets equalling liabilities. So when assets shrink by a dollar, some liability must also shrink by a dollar. The Fed's main liabilities are: bank reserves (cash that banks hold at the Fed), currency in circulation (physical dollar bills), the Treasury General Account or TGA (essentially the US government's checking account at the Fed), and the ON RRP facility. Up to here, it's pure accounting, so it's always true. Which liability actually absorbs the drain is not accounting: it depends on where cash can earn the most at the time.` },
+      { id:'d1', text:'Little cash parked at ON RRP, so reserves drain directly', color: 3,
+        explain:`The first round of QT ran from late 2017 to mid-2019. Back then the ON RRP facility held very little money, because market rates were generally above the ON RRP rate, so money funds had better options. With no cushion to drain, the shrinkage came mostly out of bank reserves, which fell from about $2.8 trillion at their 2014 peak to roughly $1.4 trillion by September 2019.` },
+      { id:'d2', text:'Repo rates spike; Fed restarts repo operations and buys T-bills', color: 4,
+        explain:`Reserves turned out to be scarcer than the Fed had estimated. In mid-September 2019, a corporate tax deadline and Treasury bond settlements pulled more cash out of the banking system at once, and overnight repo rates spiked (see Puzzle 2). The Fed ran emergency repo operations that week, and in October began buying T-bills to rebuild reserves, stressing that this was not QE.` },
+      { id:'e1', text:'Money funds pull cash out of ON RRP to buy T-bills', color: 3,
+        explain:`The second round started in June 2022 with the ON RRP facility stuffed with cash, peaking around $2.5 trillion at the end of 2022. Once the debt ceiling was resolved in mid-2023, the Treasury issued lots of T-bills paying more than ON RRP, so money market funds pulled their cash out of the facility to buy them. The drain came out of ON RRP rather than reserves. Banks also held onto their reserves as a precaution, after the 2023 regional bank failures (SVB, Signature Bank), unrealized losses on their bond portfolios, and stricter liquidity rules.` },
+      { id:'e2', text:'ON RRP empties, reserves start draining; Fed ends QT and buys T-bills', color: 4,
+        explain:`By October 2025 ON RRP was nearly empty. With the cushion gone, the drain started hitting reserves, repo rates rose above IORB, and firms leaned on the standing repo facility. The Fed judged that reserves had moved from "abundant" to "ample" and ended QT on 1 December 2025. In December it started buying about $40 billion of T-bills a month to keep reserves in the ample range, then cut that to about $25 billion a month in April 2026. The Fed stresses these "reserve management purchases" aren't QE: they're about keeping control of short-term rates, not about easing policy.` }
     ]
   },
   {
@@ -482,7 +671,7 @@ const puzzles = [
       { id:'a', text:'Asset manager wants Treasury index exposure', color: 0,
         explain:'Large investment managers (pension funds, mutual funds, index funds) need to hold Treasury bonds in their portfolios to match bond market benchmarks. The straightforward approach would be to simply buy the bonds. But there’s a more capital-efficient option: futures contracts (standardized agreements to buy or sell a Treasury bond at a set price on a future date).' },
       { id:'b', text:'Buys futures instead of cash bonds', color: 1,
-        explain:'Treasury futures let you get the same market exposure as holding the actual bonds, but without paying the full price upfront. You only need to post a small margin deposit (a fraction of the bond’s face value) at the exchange. This frees up cash that can be invested elsewhere for extra return, which is particularly attractive when short-term interest rates are high. It also avoids the accounting and operational complexity of financing actual bond positions. The trade-off: by holding futures instead of the actual bonds in the index, the asset manager takes on what’s called “basis risk” (the possibility that futures and cash bond prices don’t move in perfect lockstep).' },
+        explain:'Treasury futures let you get the same market exposure as holding the actual bonds, but without paying the full price upfront. You only need to post a small margin deposit (a fraction of the bond’s face value) at the exchange. This frees up cash that can be invested elsewhere for extra return, which is particularly attractive when short-term interest rates are high. It also avoids the accounting and operational complexity of financing actual bond positions. However, by holding futures instead of the actual bonds in the index, the asset manager takes on what’s called “basis risk” (the possibility that futures and cash bond prices don’t move in perfect lockstep).' },
       { id:'c', text:'But someone must hold the actual cash bonds', color: 2,
         explain:'Futures are derivatives - they derive their value from underlying Treasury bonds, but they aren’t the bonds themselves. Every futures contract has a buyer and a seller, and at the end of its life, actual bonds need to change hands. So somewhere in the chain, someone has to own and finance the real Treasury securities. This creates an opening for an investor who is willing to hold the actual bonds and take the other side of the trade.' },
       { id:'d', text:'Hedge fund buys cash bonds, shorts futures (long basis)', color: 3,
@@ -493,12 +682,60 @@ const puzzles = [
   }
 ];
 
-// State
-let currentPuzzle = -1; // -1 = landing
-let selectedPiece = null;
-let slotState = []; // array of piece IDs or null
-let completedPuzzles = new Set();
+// ---------- paper helpers ----------
+function hashStr(s) {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function rng(seed) {
+  let a = seed;
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+// Torn-edge polygon. Offsets are in px so the tear looks the same on any size of paper.
+function tear(r, amp, nx = 16, ny = 6) {
+  const p = [];
+  const j = () => (r() * amp).toFixed(1);
+  for (let i = 0; i <= nx; i++) p.push(`${(i / nx * 100).toFixed(1)}% ${j()}px`);
+  for (let i = 1; i < ny; i++) p.push(`calc(100% - ${j()}px) ${(i / ny * 100).toFixed(1)}%`);
+  for (let i = nx; i >= 0; i--) p.push(`${(i / nx * 100).toFixed(1)}% calc(100% - ${j()}px)`);
+  for (let i = ny - 1; i >= 1; i--) p.push(`${j()}px ${(i / ny * 100).toFixed(1)}%`);
+  return `polygon(${p.join(',')})`;
+}
+function paperStyle(seed, color, maxRot = 1.2) {
+  const r = rng(hashStr(seed));
+  const rot = ((r() * 2 - 1) * maxRot).toFixed(2);
+  return `--c:${color};--rot:${rot}deg;--tf:${tear(r, 3.5)};--tb:${tear(r, 2)}`;
+}
+function starSVG() {
+  return `<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.4l2.7 6 6.5.6-4.9 4.4 1.5 6.4L12 16.5l-5.8 3.3 1.5-6.4-4.9-4.4 6.5-.6z" fill="#f2c85b" stroke="#fffdf8" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+}
+function arrowSVG() {
+  return `<svg viewBox="0 0 22 30" fill="none" aria-hidden="true">
+    <path d="M11 2 Q 8 12, 11 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 4"/>
+    <path d="M6 18 L11 25 L16 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+function backArrowSVG() {
+  return `<svg viewBox="0 0 20 16" fill="none" aria-hidden="true">
+    <path d="M9 1 L1 8 L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M1 8 L19 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>`;
+}
 
+// ---------- state ----------
+let currentPuzzle = -1;
+let selectedPiece = null;
+let slotState = [];
+let bankOrder = [];
+let freshSlot = -1;
+let cState = null;           // part 2 state for corridor puzzles
+const completedPuzzles = new Set();
 const app = document.getElementById('app');
 
 function shuffle(arr) {
@@ -510,38 +747,39 @@ function shuffle(arr) {
   return a;
 }
 
-function arrowSVG() {
-  return `<svg viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M10 1 Q 8 10, 10 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
-    <path d="M5 14 L10 20 L15 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  </svg>`;
+// Sections let a puzzle fork. Slot order = the flattened order of section ids.
+function sectionsOf(p) {
+  return p.sections || [{ ids: p.steps.map(s => s.id) }];
+}
+function answerKey(p) {
+  return sectionsOf(p).flatMap(s => s.ids);
+}
+function stepById(p, id) { return p.steps.find(s => s.id === id); }
+
+function partAComplete(p) {
+  const key = answerKey(p);
+  return slotState.length === key.length && slotState.every((s, i) => s === key[i]);
+}
+function puzzleComplete(p) {
+  if (!partAComplete(p)) return false;
+  if (p.type !== 'corridor') return true;
+  return cState && cState.round >= p.partB.snapshots.length;
 }
 
-function backArrowSVG() {
-  return `<svg viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M9 1 L1 8 L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    <path d="M1 8 L19 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
-  </svg>`;
-}
-
+// ---------- views ----------
 function renderLanding() {
   currentPuzzle = -1;
-  let html = `
-    <div class="landing">
-      <div class="landing-title">Rates Plumbing<br>Puzzles</div>
-  `;
-  puzzles.forEach((p, i) => {
+  let html = `<div class="landing"><img class="sticker sticker-tap" src="stickers/tap.png" alt="" aria-hidden="true"><div class="landing-title">Rates Plumbing<br>Puzzles</div>`;  puzzles.forEach((p, i) => {
     const done = completedPuzzles.has(i);
     html += `
-      <div class="puzzle-card ${HD[i]} ${done ? 'completed' : ''}" onclick="startPuzzle(${i})" style="background:${COLORS[i]}">
-        <div class="card-num">${i + 1}</div>
-        <div class="card-info">
-          <h3>${p.title}</h3>
-          <p>${p.sub}</p>
-        </div>
-        <div class="card-check">✓</div>
-      </div>
-    `;
+      <div class="paper puzzle-card ${done ? 'completed' : ''}" role="button" tabindex="0"
+           onclick="startPuzzle(${i})" style="${paperStyle('card' + i, COLORS[i], 1)}">
+        <span class="pc">
+          <span class="card-num">${i + 1}</span>
+          <span class="card-info"><h3>${p.title}</h3><p>${p.sub}</p></span>
+          <span class="card-check">${starSVG()}</span>
+        </span>
+      </div>`;
   });
   html += '</div>';
   app.innerHTML = html;
@@ -549,156 +787,299 @@ function renderLanding() {
 
 function startPuzzle(idx) {
   currentPuzzle = idx;
+  const p = puzzles[idx];
   selectedPiece = null;
-  slotState = new Array(puzzles[idx].steps.length).fill(null);
+  slotState = new Array(answerKey(p).length).fill(null);
+  bankOrder = shuffle(p.steps.map(s => s.id));
+  cState = p.type === 'corridor' ? { round: 0, placed: p.partB.snapshots.map(() => ({})), sel: null, fresh: null } : null;
   renderPuzzle();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function slotHTML(p, i) {
+  const id = slotState[i];
+  const key = answerKey(p);
+  if (id === null) {
+    return `<div class="slot ${selectedPiece ? 'highlight' : ''}" role="button" tabindex="0"
+                 aria-label="Empty slot ${i + 1}" onclick="tapSlot(${i})">
+              <span class="slot-num">${i + 1}</span>
+            </div>`;
+  }
+  const step = stepById(p, id);
+  const correct = id === key[i];
+  const mark = correct
+    ? `<span class="mark ${freshSlot === i ? 'fresh' : ''}">${starSVG()}</span>`
+    : `<span class="mark x">✗</span>`;
+  return `<div class="slot filled" role="button" tabindex="0" onclick="tapSlot(${i})">
+            <div class="paper" style="${paperStyle(currentPuzzle + '-' + step.id, COLORS[step.color], 0.6)}">
+              <span class="slot-num">${i + 1}</span>
+              <span class="pc">${step.text}</span>
+              ${mark}
+            </div>
+          </div>`;
+}
+
+function flowHTML(p) {
+  let html = `<div class="flow">`;
+  if (p.topLabel) html += `<div class="flow-label">${p.topLabel}</div>`;
+  let i = 0;
+  sectionsOf(p).forEach((sec, si) => {
+    if (si > 0) {
+      if (sec.fork) html += `<div class="arrow-down">${arrowSVG()}</div><div class="fork-label">${sec.fork}</div>`;
+      else if (!sec.label) html += `<div class="arrow-down">${arrowSVG()}</div>`;
+      else html += `<div class="section-gap"></div>`;
+    }
+    if (sec.label) html += `<div class="section-label">${sec.label}</div>`;
+    sec.ids.forEach((_, k) => {
+      html += slotHTML(p, i);
+      if (k < sec.ids.length - 1) html += `<div class="arrow-down">${arrowSVG()}</div>`;
+      i++;
+    });
+  });
+  if (p.bottomLabel) html += `<div class="flow-label bottom">${p.bottomLabel}</div>`;
+  html += `</div>`;
+  return html;
+}
+
+function bankHTML(p) {
+  const placed = new Set(slotState.filter(s => s !== null));
+  const available = bankOrder.filter(id => !placed.has(id)).map(id => stepById(p, id));
+  if (!available.length) return '';
+  let html = `<div class="bank-label">Pieces</div><div class="bank">`;
+  available.forEach(s => {
+    html += `<div class="paper piece ${selectedPiece === s.id ? 'selected' : ''}" role="button" tabindex="0"
+                  onclick="tapPiece('${s.id}')" style="${paperStyle(currentPuzzle + '-' + s.id, COLORS[s.color])}">
+               <span class="pc">${s.text}</span>
+             </div>`;
+  });
+  return html + `</div>`;
+}
+
+function noteHTML(head, text, seed, color = 'var(--mustard)') {
+  return `<div class="paper note-paper" style="${paperStyle(seed, color, 0.5)}">
+            <span class="pc"><span class="note-head">${head}</span>${text}</span>
+          </div>`;
+}
+
+function explainItem(label, text, color) {
+  return `<div class="explain-item">
+    <div class="explain-bar" style="--c:${color}"></div>
+    <div class="explain-body">
+      <div class="explain-step">${label}</div>
+      <div class="explain-text">${text}</div>
+    </div>
+  </div>`;
+}
+
+// ----- part 2 (corridor) -----
+function corridorHTML(p) {
+  const B = p.partB;
+  const r = Math.min(cState.round, B.snapshots.length - 1);
+  const snap = B.snapshots[r];
+  const placed = cState.placed[r];
+  const roundDone = B.markers.every(m => placed[m.id] !== undefined);
+
+  let html = `<div class="part-divider">✂</div>`;
+  html += `<div class="part-title">${B.title}</div>`;
+  html += `<div class="part-intro">${B.intro}</div>`;
+
+  html += `<div class="snap-head">
+             <div class="snap-count">Snapshot ${r + 1} of ${B.snapshots.length}</div>
+             <div class="snap-title">${snap.title}</div>
+             <div class="snap-regime">${snap.regime}</div>
+           </div>`;
+
+  const fenceOrder = ['ceiling', 'iorb', 'floor'];
+  const fenceRole = { ceiling: 'ceiling', iorb: 'magnet', floor: 'floor' };
+  html += `<div class="corridor">`;
+  B.zones.forEach((z, zi) => {
+    const here = B.markers.filter(m => placed[m.id] === zi);
+    html += `<div class="zone ${cState.sel && !roundDone ? 'highlight' : ''}" role="button" tabindex="0"
+                  aria-label="${z}" onclick="tapZone(${zi})">
+               <span class="zone-label">${z}</span>`;
+    here.forEach(m => {
+      html += `<div class="paper tag placed" style="${paperStyle('tag' + r + m.id, m.color, 2)}">
+                 <span class="pc"><strong>${m.label}</strong><span class="tag-val">${snap.values[m.id]}</span></span>
+                 ${cState.fresh === m.id ? `<span class="mark fresh" style="right:-10px">${starSVG()}</span>` : ''}
+               </div>`;
+    });
+    html += `</div>`;
+    if (zi < fenceOrder.length) {
+      const f = fenceOrder[zi];
+      html += `<div class="paper fence" style="${paperStyle('fence' + r + f, B.fenceColors[f], 0.4)}">
+                 <span class="pc"><span class="fence-role">${fenceRole[f]}</span>${snap.fences[f]}</span>
+               </div>`;
+    }
+  });
+  html += `</div>`;
+  cState.fresh = null;
+
+  if (!roundDone) {
+    html += `<div class="bank-label">Market rates</div><div class="bank">`;
+    B.markers.filter(m => placed[m.id] === undefined).forEach(m => {
+      html += `<div class="paper tag ${cState.sel === m.id ? 'selected' : ''}" role="button" tabindex="0"
+                    onclick="tapMarker('${m.id}')" style="${paperStyle('tagb' + m.id, m.color, 2)}">
+                 <span class="pc"><strong>${m.label}</strong> <span class="tag-val">${m.long}</span></span>
+               </div>`;
+    });
+    html += `</div>`;
+  } else {
+    html += noteHTML('What was going on', snap.note, 'snapnote' + r, 'var(--lilac)');
+    if (cState.round < B.snapshots.length - 1) {
+      html += `<button class="paper paper-btn" onclick="nextSnapshot()" style="${paperStyle('nextsnap' + r, 'var(--mustard)', 0.8)}">
+                 <span class="pc">Next snapshot</span></button>`;
+    } else if (cState.round === B.snapshots.length - 1) {
+      html += `<button class="paper paper-btn" onclick="nextSnapshot()" style="${paperStyle('finsnap', 'var(--mustard)', 0.8)}">
+                 <span class="pc">See how it all works</span></button>`;
+    }
+  }
+  return html;
+}
+
+function explainerHTML(p) {
+  let html = `<div class="completion"><span class="star-wrap">${starSVG()}</span><span class="completion-text">Nailed it</span></div>`;
+  html += `<div class="explainer"><div class="explainer-title">How it works</div>`;
+  if (p.note) html += noteHTML(p.note.head, p.note.text, 'pnote' + currentPuzzle);
+
+  const key = answerKey(p);
+  let n = 0;
+  sectionsOf(p).forEach((sec, si) => {
+    if (sec.label) html += `<div class="explain-sub">${sec.label}</div>`;
+    sec.ids.forEach(id => {
+      const s = stepById(p, id);
+      n++;
+      html += explainItem(`${n}. ${s.text}`, s.explain, COLORS[s.color]);
+    });
+  });
+
+  if (p.type === 'corridor') {
+    const B = p.partB;
+    html += `<div class="explain-sub">The market rates</div>`;
+    B.markers.forEach(m => { html += explainItem(`${m.label}: ${m.long}`, m.explain, m.color); });
+    html += `<div class="explain-sub">The three snapshots</div>`;
+    B.snapshots.forEach(s => { html += explainItem(`${s.title}`, s.note, 'var(--lilac)'); });
+  }
+  html += `</div>`;
+  return html;
+}
+
 function renderPuzzle() {
   const p = puzzles[currentPuzzle];
-  const n = p.steps.length;
-  const isComplete = slotState.every((s, i) => s === p.steps[i].id);
+  const aDone = partAComplete(p);
+  const done = puzzleComplete(p);
+  if (done) completedPuzzles.add(currentPuzzle);
 
-  let html = `<div class="puzzle-header">`;
-  html += `<div class="progress-row">`;
+  let html = `<div class="puzzle-header"><div class="progress-row">`;
   html += `<button class="back-btn" onclick="renderLanding()">${backArrowSVG()} Back</button>`;
   html += `<div class="dots">`;
   puzzles.forEach((_, i) => {
     const cls = i === currentPuzzle ? 'active' : completedPuzzles.has(i) ? 'done' : '';
-    html += `<div class="dot ${cls}" onclick="navPuzzle(${i})"></div>`;
+    html += `<div class="dot ${cls}" role="button" tabindex="0" aria-label="Puzzle ${i + 1}" onclick="startPuzzle(${i})"></div>`;
   });
   html += `</div><button class="reset-btn" onclick="resetPuzzle()">Reset</button></div>`;
   html += `<div class="puzzle-title">${p.title}</div>`;
-  html += `<div class="puzzle-sub">${p.sub}</div>`;
-  html += `</div>`;
+  html += `<div class="puzzle-sub">${p.sub}</div></div>`;
 
-  // Flow
-  html += `<div class="flow">`;
-  if (p.topLabel) html += `<div class="flow-label">${p.topLabel}</div>`;
-  for (let i = 0; i < n; i++) {
-    const filled = slotState[i] !== null;
-    const correct = filled && slotState[i] === p.steps[i].id;
-    const wrong = filled && !correct;
-    const filledStep = filled ? p.steps.find(s => s.id === slotState[i]) : null;
-    const bgColor = filledStep ? COLORS[filledStep.color] : 'transparent';
-    const cls = `slot ${filled ? 'filled' : ''} ${correct ? 'correct' : ''} ${wrong ? 'wrong' : ''} ${(!filled && selectedPiece) ? 'highlight' : ''}`;
-
-    html += `<div class="${cls}" onclick="tapSlot(${i})" style="${filled ? 'background:' + bgColor : ''}">`;
-    html += `<span class="slot-num">${i + 1}</span>`;
-    html += filled ? filledStep.text : '&nbsp;';
-    html += `<span class="check">${correct ? '✓' : wrong ? '✗' : ''}</span>`;
-    html += `</div>`;
-
-    if (i < n - 1) html += `<div class="arrow-down">${arrowSVG()}</div>`;
-  }
-  if (p.bottomLabel) html += `<div class="flow-label bottom">${p.bottomLabel}</div>`;
-  html += `</div>`;
-
-  // Bank
-  const placedIds = slotState.filter(s => s !== null);
-  const available = p.steps.filter(s => !placedIds.includes(s.id));
-  const shuffled = isComplete ? [] : shuffle(available);
-
-  if (!isComplete && shuffled.length > 0) {
-    html += `<div class="bank-label">Pieces</div>`;
-    html += `<div class="bank">`;
-    shuffled.forEach((s, i) => {
-      const sel = selectedPiece === s.id ? 'selected' : '';
-      const hd = HD[s.color];
-      html += `<div class="piece ${hd} ${sel}" onclick="tapPiece('${s.id}')" style="background:${COLORS[s.color]}">${s.text}</div>`;
-    });
-    html += `</div>`;
-  } else if (!isComplete) {
-    html += `<div class="bank"></div>`;
+  if (p.type === 'corridor' && p.partA) {
+    html += `<div class="part-intro">${p.partA}</div>`;
   }
 
-  // Completion
-  if (isComplete) {
-    completedPuzzles.add(currentPuzzle);
-    html += `<div class="completion"><div class="completion-text">✓ Nailed it</div></div>`;
-    html += `<div class="explainer show">`;
-    html += `<div class="explainer-title">How it works</div>`;
-    p.steps.forEach((s, i) => {
-      html += `<div class="explain-item">
-        <div class="explain-bar" style="background:${COLORS[s.color]}"></div>
-        <div class="explain-body">
-          <div class="explain-step">${i + 1}. ${s.text}</div>
-          <div class="explain-text">${s.explain}</div>
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
+  html += flowHTML(p);
+  freshSlot = -1;
 
-    if (currentPuzzle < puzzles.length - 1) {
-      html += `<button class="nav-btn ${HD[3]}" onclick="startPuzzle(${currentPuzzle + 1})">Next puzzle →</button>`;
-    } else {
-      html += `<button class="nav-btn ${HD[3]}" onclick="renderLanding()">Back to puzzles</button>`;
-    }
+  if (!aDone) html += bankHTML(p);
+
+  if (p.type === 'corridor' && aDone && !done) html += corridorHTML(p);
+
+  if (done) {
+    html += explainerHTML(p);
+    const last = currentPuzzle === puzzles.length - 1;
+    html += `<button class="paper paper-btn" onclick="${last ? 'renderLanding()' : `startPuzzle(${currentPuzzle + 1})`}"
+                     style="${paperStyle('btn' + currentPuzzle, 'var(--mustard)', 0.8)}">
+               <span class="pc">${last ? 'Back to puzzles' : 'Next puzzle'}</span>
+             </button>`;
   }
 
   app.innerHTML = html;
 }
 
+// ---------- interaction ----------
 function tapPiece(id) {
-  if (selectedPiece === id) {
-    selectedPiece = null;
-  } else {
-    selectedPiece = id;
-  }
+  selectedPiece = selectedPiece === id ? null : id;
   renderPuzzle();
 }
 
 function tapSlot(idx) {
   const p = puzzles[currentPuzzle];
-
-  // If slot is filled, remove piece back to bank
   if (slotState[idx] !== null) {
+    if (partAComplete(p) && p.type === 'corridor') return; // part 1 is locked once part 2 starts
     slotState[idx] = null;
     selectedPiece = null;
     renderPuzzle();
     return;
   }
-
-  // If no piece selected, do nothing
   if (!selectedPiece) return;
 
-  // Place piece
-  const correct = selectedPiece === p.steps[idx].id;
-  if (correct) {
-    slotState[idx] = selectedPiece;
-    selectedPiece = null;
+  const correct = selectedPiece === answerKey(p)[idx];
+  slotState[idx] = selectedPiece;
+  selectedPiece = null;
+  if (correct) freshSlot = idx;
+  renderPuzzle();
+
+  if (!correct) {
+    const slot = document.querySelectorAll('.slot')[idx];
+    if (slot) slot.classList.add('shake');
+    setTimeout(() => { slotState[idx] = null; renderPuzzle(); }, 420);
+  }
+}
+
+function tapMarker(id) {
+  cState.sel = cState.sel === id ? null : id;
+  renderPuzzle();
+}
+
+function tapZone(zi) {
+  const p = puzzles[currentPuzzle];
+  const snap = p.partB.snapshots[cState.round];
+  const id = cState.sel;
+  if (!id) return;
+  cState.sel = null;
+  if (snap.answers[id] === zi) {
+    cState.placed[cState.round][id] = zi;
+    cState.fresh = id;
     renderPuzzle();
   } else {
-    // Wrong — shake the slot
-    slotState[idx] = selectedPiece; // temporarily place
-    selectedPiece = null;
     renderPuzzle();
+    const zone = document.querySelectorAll('.zone')[zi];
+    if (zone) zone.classList.add('shake');
+  }
+}
 
-    // Show shake then remove
-    const slots = document.querySelectorAll('.slot');
-    const slot = slots[idx];
-    if (slot) {
-      slot.classList.add('shake');
-      setTimeout(() => {
-        slotState[idx] = null;
-        renderPuzzle();
-      }, 400);
-    }
+function nextSnapshot() {
+  cState.round++;
+  cState.sel = null;
+  renderPuzzle();
+  if (cState.round < puzzles[currentPuzzle].partB.snapshots.length) {
+    const el = document.querySelector('.snap-head');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
 function resetPuzzle() {
-  slotState = new Array(puzzles[currentPuzzle].steps.length).fill(null);
-  selectedPiece = null;
-  renderPuzzle();
+  startPuzzle(currentPuzzle);
 }
 
-function navPuzzle(idx) {
-  startPuzzle(idx);
-}
+// keyboard: Enter / Space activates anything acting as a button
+document.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[role="button"]')) {
+    e.preventDefault();
+    e.target.click();
+  }
+});
 
-// Init
+const aboutLinkBtn = document.getElementById('aboutLinkBtn');
+if (aboutLinkBtn) aboutLinkBtn.style.cssText += paperStyle('about-link', 'var(--sage)', 0.8);
+
 renderLanding();
 </script>
 </body>
