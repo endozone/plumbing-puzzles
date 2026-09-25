@@ -526,21 +526,25 @@ body {
 .site-footer {
   position: relative;
   padding-top: 18px;
-  padding-right: 84px;
   border-top: 2px dashed rgba(44,47,94,.22);
   font-size: .95rem;
   line-height: 1.7;
   color: var(--muted);
 }
 .site-footer a { color: var(--ink); }
-.sticker-clock { width: 68px; top: -34px; right: 10px; transform: rotate(-10deg); }
+.sticker-clock {
+  position: static;
+  display: block;
+  width: 68px;
+  margin: 16px auto 0;
+  transform: rotate(-10deg);
+}
 
 /* desk stickers: only when there's real margin beside the page */
 .sticker-desk { position: fixed; display: none; z-index: 0; }
 @media (min-width: 700px) {
   .sticker-tap { width: 130px; top: 4px; right: 24px; }
-  .sticker-clock { width: 84px; top: -44px; }
-  .site-footer { padding-right: 100px; }
+  .sticker-clock { width: 84px; }
 }
 @media (min-width: 1240px) {
   .sticker-desk { display: block; }
@@ -557,12 +561,12 @@ body {
 <div class="app" id="app"></div>
 
 <footer class="app site-footer" style="text-align:center">
-  <img class="sticker sticker-clock" src="stickers/clock.png" alt="" aria-hidden="true">
   <a href="faq.html" class="paper paper-btn footer-link-btn" id="aboutLinkBtn"><span class="pc">About, glossary & sources</span></a>
   <p>
     Made by Mia · <a href="mailto:kuvernuit@gmail.com">Email me here</a><br>
     Information as of September 2026. Not investment advice; not affiliated with the Federal Reserve.
   </p>
+  <img class="sticker sticker-clock" src="stickers/clock.png" alt="" aria-hidden="true">
 </footer>
 <img class="sticker sticker-desk sticker-bond" src="stickers/bond.png" alt="" aria-hidden="true">
 <img class="sticker sticker-desk sticker-scale" src="stickers/scale.png" alt="" aria-hidden="true">
