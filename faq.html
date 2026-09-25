@@ -329,6 +329,9 @@ body {
 .paper-btn .pc { padding: 15px; }
 .paper-btn:active { --lift: 1px; }
 
+.footer-link-btn { text-decoration: none; margin-top: 0; margin-bottom: 18px; }
+.footer-link-btn .pc { padding: 12px; font-size: 1.02rem; }
+
 /* ============ LANDING ============ */
 .landing { padding-top: 20px; }
 
@@ -597,6 +600,7 @@ a.inline, .pc a { color: var(--ink); text-decoration: underline; text-decoration
 .footer {
   margin-top: 44px;
   padding-top: 18px;
+  text-align: center;
   border-top: 2px dashed rgba(44,47,94,.22);
   font-size: .95rem;
   color: var(--muted);
@@ -798,6 +802,7 @@ function render() {
   h += cards(READING, 'read');
 
   h += `<div class="footer">
+          <a href="index.html" class="paper paper-btn footer-link-btn" style="${paperStyle('back-link', 'var(--sage)', 0.8)}"><span class="pc">Back to puzzles</span></a>
           Made by Mia · <a href="mailto:kuvernuit.com">Email me here</a><br>
           Information as of September 2026. Not investment advice; not affiliated with the Federal Reserve.
         </div>`;
